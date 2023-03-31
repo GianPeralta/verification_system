@@ -1,0 +1,30 @@
+
+<!DOCTYPE HTML>
+<HTML>
+<HEAD>
+	<script language="javascript" type="text/javascript" src="./js/jquery-3.6.4.js"></script>
+	<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+	<div id="searchInputTab">
+		<h3>Student/Employee Verification</h3>
+		<input type="text" name="searchInput" class='bg-sayotz' style='text-align: center' id="searchInput" placeholder="Enter ID Number or Name">	
+		<button id="verifyBtn">Verify</button>
+		<br>		
+	</div>	
+	<div width='50%' name="searchResults" id="searchResults">
+		<div id='searchErrorMessage'></div>
+		<table width='80%' id='searchResultsTable' class='table table-striped' style="text-align: left;">
+		</table>
+	</div>
+	<div hidden id='studentDetails'>
+		<table width='55%' id='studentDetailsTable'>		
+		</table>
+	</div>
+	<div id='gatePassTab'>
+		<table width='100%' id='gatePass'>
+		</table>
+	</div>
+	<script src="./js/script.js"></script>
+</body>
+</html>

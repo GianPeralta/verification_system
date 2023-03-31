@@ -1,0 +1,112 @@
+
+body{
+    font-family: Verdana, Geneva, sans-serif;
+    background-color: #81cc80;
+}
+#searchResultsTable tr:not(:first-child):hover{
+    background: linear-gradient(to right, #A5E0A2, white) !important;
+    box-shadow: 3px 3px 3px gray !important;
+}
+#searchResultsTable tr:not(:first-child){
+    padding: 3px !important;
+}
+
+td{
+    border: 1px solid black;
+}
+.dth{
+    background-color: #0F402E !important;
+    color: white;	
+    padding: 5px;
+    border-radius: 3px 3px 3px 3px;
+    border: none;
+    box-shadow: 3px 3px 3px gray;
+    font-weight: bold;
+}
+
+.bg-sayotz{
+    padding: 10px;
+    border-radius: 5px 5px 5px 5px;
+    border: .5px solid rgb(200,200,200);
+    color:black !important;
+    font-weight: bold;
+    font-size: 18px;
+    width: 97%;
+}
+.bg-sayotz::placeholder{		
+    color:rgb(75,75,75) !important;
+}
+
+input[type='radio'], input[type='checkbox']{
+    margin-top: -1px;
+    vertical-align: middle;
+    height: 1em;
+    width: 1em;
+    margin-right: 3px;
+}
+
+hr {
+    height: 1px;
+    background: black;
+    border: none;
+   
+}
+#searchInputTab{
+    text-align: center;
+    width: 60%;
+    margin-top: 20px; 
+    margin: auto;
+}
+#studentDetails{
+    margin-top: 30px;
+}
+#searchResultsTable tr th,td{
+    padding: 5px;
+}
+#searchResultsTable, #studentDetailsTable, #gatePass {
+    border-collapse: collapse;
+    background-color: white;
+    margin: auto;
+}
+#studentDetailsTable {
+    margin-top: 50px;
+}
+#gatePass {
+    font-size: 15px;
+}
+#verifyBtn {
+    background-color: #00b0f0;
+    border: none;
+    color: black;
+    padding: 12px 24px; 
+    text-align: center; 
+    font-size: 16px; 
+    margin: 4px 2px; 
+    cursor: pointer; 
+    border-radius: 8px; 
+    width: 15%;
+    float: right;
+}
+
+#verifyBtn:hover {
+    background-color: #037097;
+}
+#gatePassTab #gatePass .grey{
+    background-color: #d0cece !important;
+}
+#gatePassTab{
+    position: absolute;
+    top: 0;
+    max-width: 510px;
+    min-width: 510px;
+    visibility: hidden;
+}
+@media print {
+    body{
+        background-color: white;
+    }
+    #searchInputTab, #searchResults, #studentDetails, #searchInputTab *, #searchResults *, #studentDetails *{
+        display: none;
+    }
+}
+
