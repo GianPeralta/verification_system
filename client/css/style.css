@@ -105,8 +105,8 @@ hr {
     body{
         background-color: white;
     }
-    #searchInputTab, #searchResults, #studentDetails, #searchInputTab *, #searchResults *, #studentDetails *{
-        display: none;
+    #searchInputTab, #searchResults, #studentDetails, #searchDepartmentMonth, #searchInputTab *, #searchResults *, #studentDetails *, #searchDepartmentMonth *{
+        display: none !important;
     }
 }
 
