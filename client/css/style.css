@@ -109,4 +109,54 @@ hr {
         display: none !important;
     }
 }
+h3, h5{
+    margin: 0;
+    text-align: center;
+}
+h4{
+    text-align: center;
+}
+#searchDepartmentMonth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 75%;
+    margin: 0 auto;
+}
 
+#searchDepartmentMonth select {
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background-color: #81cc80;
+    font-size: 16px;
+    margin-bottom: 16px;
+    margin-right: 30px;
+}
+
+#searchDepartmentMonth label {
+    font-size: 18px;
+    margin-bottom: 16px;
+
+}
+#submit-button {
+    padding: 8px 16px;
+    background-color: #0077cc;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+#displayTab{
+    margin: 0 auto;
+}
+
+#displayTabTable {
+    border-collapse: collapse;
+}
+#displayTabTable th, td{
+    border: 1px solid black;
+}

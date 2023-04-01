@@ -15,7 +15,7 @@ let clickProcessed = false;
 $('#searchResults').on('click','tr:not(:first)', function(){
     if (!clickProcessed) {
         clickProcessed = true;
-        $UI =$(this).attr('ui');
+        $UI =$(this).attr('idn');
         fetchStudentsDetails($UI);
         setTimeout(() => {
         clickProcessed = false;
@@ -58,27 +58,31 @@ function fetchStudentsDetails(ui) {
     })
     .then(response => response.json())
         .then(studentResult => {
-            console.log(studentResult[0]);
+            console.log(studentResult);
             const student = {
                 name: studentResult[0].name,
-                id: studentResult[0].idn,
-                department: studentResult[0].EDU_LEVEL_NAME,
-                course: studentResult[0].strand,
-                yearLevel: studentResult[0].LEVEL_NAME,
-                sex: studentResult[0].GENDER,
-                lastEnrollment: studentResult[0].DATE_OF_ENROLLMENT,
-                yearGraduated: "N/A",
+                id: studentResult[0].student_id,
+                department: studentResult[0].department,
+                course: studentResult[0].course,
+                yearLevel: studentResult[0].year_level,
+                sex: studentResult[0].sex,
+                lastEnrollment: studentResult[0].last_enrollment,
+                yearGraduated: studentResult[0].year_graduated,
                 date: getFormattedDateTime().date,
-                time: getFormattedDateTime().time
+                time: getFormattedDateTime().time,
+                pic: studentResult[0].image_data
             };
-            $verified = '<tr><td width="30%">Name:</td><td width="40%">' + student.name + '</td><td rowspan="8" width="30%"><img src="./img/boyy.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student.id + '</td></tr><tr><td>Dept.:</td><td>' + student.department + '</td></tr><tr><td>Course:</td><td>' + student.course + '</td></tr><tr><td>Year Level:</td><td>' + student.yearLevel + '</td></tr><tr><td>Sex:</td><td>' + student.sex + '</td></tr><tr><td>Last Enrollment:</td><td>' + student.lastEnrollment + '</td></tr><tr><td>Year Graduated:</td><td>' + student.yearGraduated + '</td></tr><tr><td colspan="3"><button id="confirm" style="width:100%;height:25px;background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></td></tr><tr><td colspan="2">Reason:<br><input type="radio" name="option" value="Lost" id="option1"><label for="option1">Lost</label><br><input type="radio" name="option" value="Forgot" id="option2"><label for="option2">Forgot</label><br><input type="radio" name="option" value="Did not process ID yet" id="option3"><label for="option3">Did not process ID yet</label><br><input type="radio" name="option" value="ID lost, on process for renewal" id="option4"><label for="option4">ID lost, on process for renewal</label><br><input type="radio" name="option" value="Misplaced" id="option5"><label for="option5">Misplaced</label><br><input type="radio" name="option" value="Confiscated" id="option6"><label for="option6">Confiscated</label><br><input type="radio" name="option" value="Deposited" id="option7"><label for="option7">Deposited</label><br><input type="radio" name="option" value="Others" id="option8"><label for="option8">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button></td></tr>';
+            console.log(student);
+            
+            $verified = '<tr><td width="30%">Name:</td><td width="40%">' + student.name + '</td><td rowspan="8" width="30%"><img src="data:image/jpeg;base64,' + student.pic + '" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student.id + '</td></tr><tr><td>Dept.:</td><td>' + student.department + '</td></tr><tr><td>Course:</td><td>' + student.course + '</td></tr><tr><td>Year Level:</td><td>' + student.yearLevel + '</td></tr><tr><td>Sex:</td><td>' + student.sex + '</td></tr><tr><td>Last Enrollment:</td><td>' + student.lastEnrollment + '</td></tr><tr><td>Year Graduated:</td><td>' + student.yearGraduated + '</td></tr><tr><td colspan="3"><button id="confirm" style="width:100%;height:25px;background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></td></tr><tr><td colspan="2">Reason:<br><input type="radio" name="option" value="Lost" id="option1"><label for="option1">Lost</label><br><input type="radio" name="option" value="Forgot" id="option2"><label for="option2">Forgot</label><br><input type="radio" name="option" value="Did not process ID yet" id="option3"><label for="option3">Did not process ID yet</label><br><input type="radio" name="option" value="ID lost, on process for renewal" id="option4"><label for="option4">ID lost, on process for renewal</label><br><input type="radio" name="option" value="Misplaced" id="option5"><label for="option5">Misplaced</label><br><input type="radio" name="option" value="Confiscated" id="option6"><label for="option6">Confiscated</label><br><input type="radio" name="option" value="Deposited" id="option7"><label for="option7">Deposited</label><br><input type="radio" name="option" value="Others" id="option8"><label for="option8">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button></td></tr>';
             $('#studentDetailsTable').append($verified);
-
-            $confirmed = '<tr style="position:relative"><td colspan="2"><img src="./img/logo.png" alt="" width="140px" style="padding-left:5px"><span style="position:absolute;bottom:5px;right:10px;font-size:12px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span></td></tr><tr class="grey"><td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr><td>Date: ' + student.date + '</td><td>Entry Time: ' + student.time + '</td></tr><tr><td colspan="2">Name: '+ student.name +' </td></tr><tr><td colspan="2">Course & Year Level: '+ student.yearLevel +' </td></tr><tr class="grey"><td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr><td style="padding-left:20px;width:50%"><input type="checkbox" id="checkbox1" name="checkbox1" value="Lost"><label for="checkbox1">Lost</label><br><input type="checkbox" id="checkbox2" name="checkbox2" value="Forgot"><label for="checkbox2">Forgot</label><br><input type="checkbox" id="checkbox3" name="checkbox3" value="Did not process ID yet"><label for="checkbox3">Did not process ID yet</label><br><input type="checkbox" id="checkbox4" name="checkbox4" value="ID lost, on process for renewal"><label for="checkbox4">ID lost, on process<br>for renewal</label><br></td><td style="padding-left:20px;padding-right:20px;width:50%"><input type="checkbox" id="checkbox5" name="checkbox5" value="Misplaced"><label for="checkbox5">Misplaced</label><br><input type="checkbox" id="checkbox6" name="checkbox6" value="Confiscated"><label for="checkbox6">Confiscated</label><br><input type="checkbox" id="checkbox7" name="checkbox7" value="Deposited"><label for="checkbox7">Deposited</label><br><input type="checkbox" id="checkbox8" name="checkbox8" value="Others"><label for="checkbox8">Others:</label><br><input type="text" id="others" style="border:none;border-bottom:1px solid #000;width:100%;background-color:transparent"></td></tr><tr><td colspan="2" style="font-style:italic;font-weight:700;text-align:center;font-size:14px">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr><td colspan="2"><div style="width:70%;margin:0 auto;text-align:center;padding-top:60px;padding-bottom:10px"><hr><span style="font-weight:700">Student Signature</span></div></td></tr><tr><td colspan="2"><div style="margin:0 auto;text-align:center;padding-top:15px;padding-bottom:10px"><span style="text-decoration-line:underline">SO Dianna D. Ang / October 26, 2022</span><br><span style="font-weight:700;font-size:13px">Issuing Officer</span><br><span style="font-size:13px">(Name | Signature | Date)</span></div></td></tr><tr><td colspan="2" style="font-size:13px">UC-OSH-FORM-03<br>May 26, 2022 Rev.01</td></tr>';
+            $('#studentDetails').fadeIn(1500);
+            
+            $confirmed = '<tr style="position:relative"><td colspan="2"><img src="./img/logo.png" alt="" width="140px" style="padding-left:5px"><span style="position:absolute;bottom:5px;right:10px;font-size:12px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span></td></tr><tr class="grey"><td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr><td>Date: ' + student.date + '</td><td>Entry Time: ' + student.time + '</td></tr><tr><td colspan="2">Name: '+ student.name +' </td></tr><tr><td colspan="2">Course & Year Level: '+ student.course + ' ' + student.yearLevel +' </td></tr><tr class="grey"><td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr><td style="padding-left:20px;width:50%"><input type="checkbox" id="checkbox1" name="checkbox1" value="Lost"><label for="checkbox1">Lost</label><br><input type="checkbox" id="checkbox2" name="checkbox2" value="Forgot"><label for="checkbox2">Forgot</label><br><input type="checkbox" id="checkbox3" name="checkbox3" value="Did not process ID yet"><label for="checkbox3">Did not process ID yet</label><br><input type="checkbox" id="checkbox4" name="checkbox4" value="ID lost, on process for renewal"><label for="checkbox4">ID lost, on process<br>for renewal</label><br></td><td style="padding-left:20px;padding-right:20px;width:50%"><input type="checkbox" id="checkbox5" name="checkbox5" value="Misplaced"><label for="checkbox5">Misplaced</label><br><input type="checkbox" id="checkbox6" name="checkbox6" value="Confiscated"><label for="checkbox6">Confiscated</label><br><input type="checkbox" id="checkbox7" name="checkbox7" value="Deposited"><label for="checkbox7">Deposited</label><br><input type="checkbox" id="checkbox8" name="checkbox8" value="Others"><label for="checkbox8">Others:</label><br><input type="text" id="others" style="border:none;border-bottom:1px solid #000;width:100%;background-color:transparent"></td></tr><tr><td colspan="2" style="font-style:italic;font-weight:700;text-align:center;font-size:14px">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr><td colspan="2"><div style="width:70%;margin:0 auto;text-align:center;padding-top:60px;padding-bottom:10px"><hr><span style="font-weight:700">Student Signature</span></div></td></tr><tr><td colspan="2"><div style="margin:0 auto;text-align:center;padding-top:15px;padding-bottom:10px"><span style="text-decoration-line:underline">SO Dianna D. Ang / '+ student.date +'</span><br><span style="font-weight:700;font-size:13px">Issuing Officer</span><br><span style="font-size:13px">(Name | Signature | Date)</span></div></td></tr><tr><td colspan="2" style="font-size:13px">UC-OSH-FORM-03<br>May 26, 2022 Rev.01</td></tr>';
             $('#gatePass').append($confirmed);
             
             $('#searchResults').hide();
-            $('#studentDetails').fadeIn(1500);
+          
             $('#other_option').prop('disabled', true);
             $('#studentDetailsTable tr:last-child').hide();
             $('#confirm').click(function() {
@@ -122,10 +126,12 @@ function fetchStudentsDetails(ui) {
                     $('head').append(printCSS); 
                 }
             });
+            
             $('#print-btn').click(() => {
                 window.print();
                 addToDB(student.name, student.id, $reason, student.date, student.department);
             });
+            
                      
         })
     .catch(error => console.error(error));
@@ -145,6 +151,8 @@ function fetchStudent(ui) {
         })
         .then(response => response.json())
         .then(studentResult => {
+            console.log(studentResult);
+            
             if ($('#studentDetails').is(':visible')) {
                 $('#studentDetails').slideUp(500);
                 $('#searchResults').slideDown(1000);
@@ -155,18 +163,23 @@ function fetchStudent(ui) {
                 $('#searchResultsTable').empty();
                 $('#searchErrorMessage').empty();
                 $('#searchErrorMessage').append('No student with name/ID number: ' + $('#searchInput').val());
-            }else if (studentResult.length == 1){
-                fetchStudentsDetails(studentResult[0].ui);
-            }else {
+            }
+            
+            else if (studentResult.length == 1){
+                fetchStudentsDetails(studentResult[0].id);
+            }
+            
+            else {
                 $('#searchResultsTable').empty();
                 $('#searchErrorMessage').empty();
                 $('#searchResultsTable').append("<tr class='dth'><th width='40%'>Name</th><th width='20%'>ID Number</th><th width='40%'>Strand</th></tr>");
                 studentResult.forEach(function(student) {
-                    $studentResultDisplay = '<tr ui="' + student.ui + '" lvl="' + student.LEVEL_NAME + '" eDate="' + student.DATE_OF_ENROLLMENT + '"><td>' + student.name + '</td><td>' + student.idn + '</td><td>' + student.strand + '</td></tr>';
+                    $studentResultDisplay = '<tr idn="' + student.id + '"><td>' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.department + '</td></tr>';
                     $('#searchResultsTable').append($studentResultDisplay);
                 });
                 console.log(studentResult);
             }
+            
         })
         .catch(error => console.error(error));
     }else{
@@ -208,7 +221,7 @@ $('#submit-button').click(function() {
     $month = $("#monthList").val();
     $year = $("#yearList").val();
     $day = $("#dayList").val();
-    $deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>' + $department + '</h5> <h5>Month of ' + $month + '</h5>';
+    $deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>' + $department + '</h5> <h5>' + ($month == 'All Months' ? $month: 'Month of ' + $month) + '</h5>';
     $('#listHeader').append($deptMonth);
     $('#listHeader').show(500);
     $('#displayTab').show(500);
