@@ -97,6 +97,7 @@ hr {
 #gatePassTab{
     position: absolute;
     top: 0;
+    left: 0;
     max-width: 510px;
     min-width: 510px;
     visibility: hidden;
