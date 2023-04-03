@@ -49,6 +49,16 @@
                 array_push($det_ar, $row);
             }
             echo json_encode($det_ar);
+        }else if(isset($_POST['username']) && isset($_POST['password']) && $_POST['loc']=='logIn'){			
+            $username=mysqli_real_escape_string($conn, trim($_POST['username']));
+            $password=mysqli_real_escape_string($conn, trim($_POST['password']));
+            $det_ar=array();
+            $qry="SELECT * FROM users WHERE username='$username' AND password=MD5('$password')";
+            $res=mysqli_query($conn,$qry);
+            while($row=mysqli_fetch_array($res, MYSQLI_ASSOC)){
+                array_push($det_ar, $row);
+            }
+            echo json_encode($det_ar);
         }
         
     }

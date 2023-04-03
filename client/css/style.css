@@ -74,11 +74,10 @@ hr {
 #gatePass {
     font-size: 15px;
 }
-#verifyBtn {
+button {
     background-color: #00b0f0;
     border: none;
-    color: black;
-    padding: 12px 24px; 
+    padding: 12px; 
     text-align: center; 
     font-size: 16px; 
     margin: 4px 2px; 
@@ -160,4 +159,11 @@ h4{
 }
 #displayTabTable th, td{
     border: 1px solid black;
+}
+
+#userTab{
+    background-color: #A5E0A2;
+    width: 70%;
+    margin: 0 auto;
+    margin-bottom: 50px;
 }
