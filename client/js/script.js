@@ -1,12 +1,9 @@
 
-if (!isLoggedIn()) {
+if (localStorage.getItem('userToken') === null) {
     window.location.href = 'login.html';
-}
-function isLoggedIn() {
-    const userToken = localStorage.getItem('userToken');
-    return userToken !== null;
-}
-$('#userTab').append('<h2 style="padding-left:15px;">Hello, '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</h2>');
+} 
+
+$('#userTab').append('<h2 style="padding-left:15px;">'+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</h2>');
 
 $('#logout').on('click', function() {
     localStorage.removeItem('userToken');
@@ -266,6 +263,10 @@ $('#submit-button').on('click', function() {
     $('#displayTab').show(500);
     
     retrieveList($department, $reason, $month, $year, $day);
+});
+
+$('#print-display').on('click', function() {
+    window.print();
 });
 
 function retrieveList(department, reason, month, year, day){

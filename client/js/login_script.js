@@ -42,13 +42,11 @@ function generateToken(length) {
     let result = '';
     for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
-}
+    }
     return result;
 }
-if (isLoggedIn()) {
+
+if (localStorage.getItem('userToken') !== null) {
     window.location.href = 'verification.html';
 }
-function isLoggedIn() {
-    const userToken = localStorage.getItem('userToken');
-    return userToken !== null;
-}
+

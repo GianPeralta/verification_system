@@ -181,6 +181,7 @@ h4{
     margin-top: 10px;
 }
 
+
 #searchDepartmentMonth select {
     padding: 8px;
     border-radius: 4px;
@@ -188,6 +189,7 @@ h4{
     background-color: #81cc80;
     font-size: 16px;
     float: right;
+    width: 100%;
 }
 
 #searchDepartmentMonth label {
@@ -195,7 +197,7 @@ h4{
     margin-bottom: 16px;
 
 }
-#submit-button {
+.display-buttons {
     padding: 8px 16px;
     background-color: #0077cc;
     color: #fff;
@@ -203,7 +205,6 @@ h4{
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
-    margin-bottom: 16px;
 }
 #displayTab{
     margin: 0 auto;
