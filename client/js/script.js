@@ -7,22 +7,29 @@ function isLoggedIn() {
     return userToken !== null;
 }
 $('#userTab').append('<h2 style="padding-left:15px;">Hello, '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</h2>');
-console.log(localStorage.getItem('userName'));
 
-$('#logout').click(function() {
+$('#logout').on('click', function() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userName');
     window.location.href = 'login.html';
 });
 
-$('#searchInput').keyup(function(key){	
-    if(key.which==13){	
-        $UI = $('#searchInput').val();	
+$('#display_records').on('click', function() {
+    window.location.href = 'display.html';
+});
+
+$('#verification').on('click', function() {
+    window.location.href = 'verification.html';
+});
+
+$('#searchInput').on('keyup', function(event){
+    if(event.key === 'Enter'){
+        $UI = $('#searchInput').val();
         fetchStudent($UI);
     }
 });
 
-$('#verifyBtn').click(function() {
+$('#verifyBtn').on('click', function() {
     $UI = $('#searchInput').val();	
     fetchStudent($UI);
 });
@@ -34,7 +41,7 @@ $('#searchResults').on('click','tr:not(:first)', function(){
         $UI =$(this).attr('idn');
         fetchStudentsDetails($UI);
         setTimeout(() => {
-        clickProcessed = false;
+            clickProcessed = false;
         }, 3000); 
     }		
 });	
@@ -101,56 +108,66 @@ function fetchStudentsDetails(ui) {
           
             $('#other_option').prop('disabled', true);
             $('#studentDetailsTable tr:last-child').hide();
-            $('#confirm').click(function() {
-                $('#studentDetailsTable tr:last-child').show(500);
+            $('#confirm').on('click', function() {
+                $('#studentDetailsTable tr:last-child').show(1000);
                 $('#studentDetailsTable tr:last-child').prev().hide();
             });
+            $('#print-btn').prop('disabled', true);
             $reason = '';
-            $('input[type="radio"], #other_option').change(function() {
+            $('input[type="radio"], #other_option').on('change', function() {
                 if ($('#option8').is(':checked')) {
-                    check(false, false, false, false, false, false, false, false, true, $('#other_option').val());
-                    $reason = $('#checkbox8').val() + ': ' + $('#others').val();
+                    check(false, false, false, false, false, false, false, false, true, $('#other_option').val().trim());
+                    $reason = $('#checkbox8').val() + ': ' + $('#other_option').val().trim();
+                    if($('#other_option').val().trim() != ''){
+                        forPrinting();
+                    }else{
+                        $('#print-btn').prop('disabled', true);
+                    }
                 }else if ($('#option1').is(':checked')){
                     check(true, true, false, false, false, false, false, false, false, '');
                     $reason = $('#checkbox1').val();
+                    forPrinting();
                 }else if ($('#option2').is(':checked')){
                     check(true, false, true, false, false, false, false, false, false, '');
                     $reason = $('#checkbox2').val();
+                    forPrinting();
                 }else if ($('#option3').is(':checked')){
                     check(true, false, false, true, false, false, false, false, false, '');
                     $reason = $('#checkbox3').val();
+                    forPrinting();
                 }else if ($('#option4').is(':checked')){
                     check(true, false, false, false, true, false, false, false, false, '');
                     $reason = $('#checkbox4').val();
+                    forPrinting();
                 }else if ($('#option5').is(':checked')){
                     check(true, false, false, false, false, true, false, false, false, '');
                     $reason = $('#checkbox5').val();
+                    forPrinting();
                 }else if ($('#option6').is(':checked')){
                     check(true, false, false, false, false, false, true, false, false, '');
                     $reason = $('#checkbox6').val();
+                    forPrinting();
                 }else if ($('#option7').is(':checked')){
                     check(true, false, false, false, false, false, false, true, false, '');
                     $reason = $('#checkbox7').val();
-                }
-            });
-            $('#print-btn').prop('disabled', true);
-            $('input[type="radio"]').click(function() {
-                if($('input[type="radio"]:checked').length == 1) {
-                    $('#print-btn').prop('disabled', false);
-                    var printCSS = $('<style media="print">');
-                    printCSS.append('#gatePassTab, #gatePassTab * { visibility: visible; }');
-                    $('head').append(printCSS); 
-                }
+                    forPrinting();
+                } 
             });
             
-            $('#print-btn').click(() => {
+            $('#print-btn').on('click', () => {
                 window.print();
                 addToDB(student.name, student.id, $reason, student.date, student.department);
-            });
-            
-                     
+            });      
         })
     .catch(error => console.error(error));
+}
+
+function forPrinting(){
+    $('style[media="print"]').remove();
+    $('#print-btn').prop('disabled', false);
+    var printCSS = $('<style media="print">');
+    printCSS.append('#gatePassTab, #gatePassTab * { visibility: visible; }');
+    $('head').append(printCSS); 
 }
 
 function fetchStudent(ui) {
@@ -229,8 +246,11 @@ function addToDB(name, student_id, reason, date, department) {
     })
     .catch(error => console.error(error));		
 }
+const monthList = document.getElementById("monthList");
 
-$('#submit-button').click(function() {
+
+
+$('#submit-button').on('click', function() {
     $('#listHeader').empty();
     $('#displayTabTable').empty();
     $department = $("#deptList").val();
@@ -238,10 +258,13 @@ $('#submit-button').click(function() {
     $month = $("#monthList").val();
     $year = $("#yearList").val();
     $day = $("#dayList").val();
-    $deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>' + $department + '</h5> <h5>' + ($month == 'All Months' ? $month: 'Month of ' + $month) + '</h5>';
+    $dayValue = $day.replace(/,/g, '');
+    
+    $deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>' + $department + '</h5> <h5>' + ($month == 'All Months' || $year != 'All Years' ? $month: 'Month of ' + $month) + ($year == 'All Years' ? '': ' of '+$year)+'</h5><h5>'+($dayValue == 'All Days' || $dayValue == '1st Week' || $dayValue == '2nd Week' || $dayValue == '3rd Week' || $dayValue == '4th Week' || $dayValue == '5th Week' ? $dayValue: 'Day '+$dayValue)+'</h5>';
     $('#listHeader').append($deptMonth);
     $('#listHeader').show(500);
     $('#displayTab').show(500);
+    
     retrieveList($department, $reason, $month, $year, $day);
 });
 
@@ -273,3 +296,40 @@ function retrieveList(department, reason, month, year, day){
     .catch(error => console.error(error));	
 }
 
+/*
+function randomData(){
+
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June', 
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const reasons = ['Lost', 'Forgot', 'Did not process ID yet', 'ID lost, on process for renewal',
+     'Misplaced', 'Confiscated', 'Deposited'];
+
+    const departments = ['College of Information Technology and Computer Science', 'College of Accountancy', 'College of Teacher Education', 
+    'College of Criminal Justice Education', 'College of Arts and Sciences', 'College of Business Administration', 'College of Engineering and Architecture',
+    'College of Hospitality and Tourism Management', 'College of Nursing', 'College of Law',
+    ];
+    
+    const year = Math.floor(Math.random() * (2023 - 2020 + 1)) + 2020;
+    
+    const monthIndex = Math.floor(Math.random() * months.length);
+    const month = months[monthIndex];
+
+    const reasonIndex = Math.floor(Math.random() * reasons.length);
+    const reason = reasons[reasonIndex];
+
+    const departmentIndex = Math.floor(Math.random() * departments.length);
+    const department= departments[departmentIndex];
+    
+    const day = Math.floor(Math.random() * 31) + 1;
+    
+    const dateString = `${month} ${day}, ${year}`;
+    
+    return { date: dateString, reason: reason, department: department };
+}
+
+for(let i = 0; i< 100; i++){
+    addToDB("Rivia, Geralt", "18-1690-714", randomData().reason, randomData().date, randomData().department);
+}
+*/

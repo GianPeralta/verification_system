@@ -83,7 +83,7 @@ button {
     margin: 4px 2px; 
     cursor: pointer; 
     border-radius: 8px; 
-    width: 15%;
+    width: 20%;
     float: right;
 }
 
@@ -105,9 +105,50 @@ button {
     body{
         background-color: white;
     }
-    #searchInputTab, #searchResults, #studentDetails, #searchDepartmentMonth, #searchInputTab *, #searchResults *, #studentDetails *, #searchDepartmentMonth *{
+    #searchInputTab, #searchResults, #studentDetails, #searchDepartmentMonth, #userTab, #searchInputTab *, #searchResults *, #studentDetails *, #searchDepartmentMonth *, #userTab *{
         display: none !important;
     }
+}
+#login-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #34495e;
+    border-radius: 5px;
+    color: white;
+}
+
+#login-form input[type="text"], input[type="password"] {
+    width: 96%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    background-color: #95a5a6;
+    color: #fff;
+    border-radius: 5px;
+}
+
+#login-form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#login-form input[type="submit"]:hover {
+    background-color: #27ae60;
+}
+
+#error-message {
+    text-align: center;
+    margin-top: 10px;
+}
+#label_login {
+    text-align: center;
+    margin-top: 30px;
 }
 h3, h5{
     margin: 0;
@@ -165,5 +206,5 @@ h4{
     background-color: #A5E0A2;
     width: 70%;
     margin: 0 auto;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 }

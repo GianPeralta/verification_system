@@ -5,6 +5,10 @@
 	<link rel="stylesheet" href="./css/style.css">
 </head>
 <body style="background-color: white;">
+    <div id="userTab" style="border: 1px solid black;">
+		<button id="logout" style="margin: 15px">Logout</button>
+        <button id="verification" style="margin: 15px">Verification</button>
+	</div>	
     <div id="searchDepartmentMonth">
         <label for="deptList">Department:</label>
         <select id="deptList" name="deptList">
@@ -63,7 +67,12 @@
 
         <label for="dayList">Day:</label>
         <select id="dayList" name="dayList">
-            <option value="All Days">All Days</option>
+            <option value="All Days">All Days (Days 1-31)</option>
+            <option value="1st Week">1st Week (Days 1-7)</option>
+            <option value="2nd Week">2nd Week (Days 8-14)</option>
+            <option value="3rd Week">3rd Week (Days 15-21)</option>
+            <option value="4th Week">4th Week (Days 22-28)</option>
+            <option value="5th Week">5th Week (Days 29-31)</option>
         </select>
 
         <button id="submit-button">Submit</button>
