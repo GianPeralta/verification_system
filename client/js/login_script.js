@@ -27,6 +27,8 @@ loginForm.addEventListener('submit', (event) => {
             errorMessage.textContent = 'Invalid username or password';
             $('#username').val('');
             $('#password').val('');
+            $('#username').trigger('focus');
+
         }
     })
     .catch(error => {
