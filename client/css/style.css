@@ -61,8 +61,10 @@ hr {
     margin-top: 30px;
 }
 #searchResultsTable tr th,td{
-    padding: 5px;
+    padding: 3px;
 }
+
+
 #searchResultsTable, #studentDetailsTable, #gatePass {
     border-collapse: collapse;
     background-color: white;
@@ -71,9 +73,7 @@ hr {
 #studentDetailsTable {
     margin-top: 50px;
 }
-#gatePass {
-    font-size: 15px;
-}
+
 button {
     background-color: #00b0f0;
     border: none;
@@ -97,8 +97,9 @@ button {
     position: absolute;
     top: 0;
     left: 0;
-    max-width: 510px;
-    min-width: 510px;
+    max-width: 330px;
+    min-width: 330px;
+    font-size: 9px;
     visibility: hidden;
 }
 @media print {
@@ -223,3 +224,4 @@ h4{
     margin: 0 auto;
     margin-bottom: 20px;
 }
+
