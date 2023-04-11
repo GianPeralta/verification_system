@@ -4,7 +4,15 @@
 	<script language="javascript" type="text/javascript" src="./js/jquery-3.6.4.js"></script>
 	<link rel="stylesheet" href="./css/style.css">
 </head>
-<body style="background-color: white;">
+<body>
+    <header>
+		<div id="logo">
+			<img src="./img/uc_logo.png" alt="" height="52px">
+		</div>
+		<div id="site-name">
+			<p>Student Verification</p> 
+		</div>
+	</header>
     <div id="userTab" style="border: 1px solid black;">
 		<button id="logout" style="margin: 15px">Logout</button>
         <button id="verification" style="margin: 15px">Verification</button>
@@ -13,63 +21,14 @@
         <table id="no-border">
             <tr>
                 <td colspan="1">
-                    <label for="reasonList">Reason:</label>
-                    <select id="reasonList" name="reasonList">
-                        <option value="All Reasons">All Reasons</option>
-                        <option value="Lost">Lost</option>
-                        <option value="Forgot">Forgot</option>
-                        <option value="Did not process ID yet">Did not process ID yet</option>
-                        <option value="ID lost, on process for renewal">ID lost, on process for renewal</option>
-                        <option value="Misplaced">Misplaced</option>
-                        <option value="Confiscated">Confiscated</option>
-                        <option value="Deposited">Deposited</option>
-                        <option value="Others">Others</option>
-                    </select>
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" class="green-input">
                 </td>
                 <td colspan="1">
-                    <label for="monthList">Month:</label>
-                    <select id="monthList" name="monthList">
-                        <option value="All Months">All Months</option>
-                        <option value="January">January</option>
-                        <option value="February">February</option>
-                        <option value="March">March</option>
-                        <option value="April">April</option>
-                        <option value="May">May</option>
-                        <option value="June">June</option>
-                        <option value="July">July</option>
-                        <option value="August">August</option>
-                        <option value="September">September</option>
-                        <option value="October">October</option>
-                        <option value="November">November</option>
-                        <option value="December">December</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <label for="yearList">Year:</label>
-                    <select id="yearList" name="yearList">
-                        <option value="All Years">All Years</option>
-                        <option value="2023">2023</option>
-                        <option value="2022">2022</option>
-                        <option value="2021">2021</option>
-                        <option value="2020">2020</option>
-                    </select>
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" class="green-input">
                 </td>
                 <td colspan="1">
-                    <label for="dayList">Day:</label>
-                    <select id="dayList" name="dayList">
-                        <option value="All Days">All Days (Days 1-31)</option>
-                        <option value="1st Week">1st Week (Days 1-7)</option>
-                        <option value="2nd Week">2nd Week (Days 8-14)</option>
-                        <option value="3rd Week">3rd Week (Days 15-21)</option>
-                        <option value="4th Week">4th Week (Days 22-28)</option>
-                        <option value="5th Week">5th Week (Days 29-31)</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
                     <label for="deptList">Department:</label>
                     <select id="deptList" name="deptList">
                         <option value="All Deparments">All Deparments</option>
@@ -86,17 +45,25 @@
                         <option value="SHS">Senior High School</option>
                     </select>
                 </td>
+                <td colspan="1">
+                    <button class="display-buttons" id="submit-button" style="width: 100%; height: 50px;">Submit</button>
+                </td>
             </tr>
+            <!--
             <tr>
-                <td>
+                <td colspan="2">
                     <button class="display-buttons" id="submit-button" style="width: 100%;">Submit</button>
                 </td>
                 <td>
                     <button class="display-buttons" id="print-display" style="width: 100%;">Print Page</button>
                 </td>
             </tr>
+            <button onclick="sortTable()">Sort</button>
+            -->
         </table>
     </div>	
+    date range department reason
+    add margin display-buttonsremoved header	
 
     <div hidden id="listHeader">
         <table></table>
@@ -106,6 +73,9 @@
         <table style="width: 100%;" id="displayTabTable">
         </table>
     </div>
+    <footer>
+		<p>&copy; 2023 University of the Cordilleras. All Rights Reserved.</p>
+	</footer>
     <script src="./js/script.js"></script>
     <script>
         for($day = 1; $day <= 31; $day++){

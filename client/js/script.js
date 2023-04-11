@@ -16,7 +16,7 @@ $('#display_records').on('click', function() {
 });
 
 $('#verification').on('click', function() {
-    window.location.href = 'verification.html';
+    window.location.href = 'index.html';
 });
 
 $('#searchInput').on('keyup', function(event){
@@ -65,7 +65,9 @@ function getFormattedDateTime() {
     const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
     const formattedTime = date.toLocaleTimeString('en-US', timeOptions);
 
-    return { date: formattedDate, time: formattedTime };
+    const unFormattedDate = date.toISOString().slice(0, 10);
+
+    return { date: formattedDate, time: formattedTime, unFoDate: unFormattedDate};
 }
 
 function fetchStudentsDetails(ui) {
@@ -89,6 +91,7 @@ function fetchStudentsDetails(ui) {
                 lastEnrollment: studentResult[0].last_enrollment,
                 yearGraduated: studentResult[0].year_graduated,
                 date: getFormattedDateTime().date,
+                unFormattedDate : getFormattedDateTime().unFoDate,
                 time: getFormattedDateTime().time,
                 pic: studentResult[0].image_data
             };
@@ -153,7 +156,7 @@ function fetchStudentsDetails(ui) {
             
             $('#print-btn').on('click', () => {
                 window.print();
-                addToDB(student.name, student.id, $reason, student.date, student.department);
+                addToDB(student.name, student.id, $reason, student.unFormattedDate, student.department);
             });      
         })
     .catch(error => console.error(error));
@@ -250,41 +253,36 @@ const monthList = document.getElementById("monthList");
 $('#submit-button').on('click', function() {
     $('#listHeader').empty();
     $('#displayTabTable').empty();
-    $department = $("#deptList").val();
-    $reason = $("#reasonList").val();
-    $month = $("#monthList").val();
-    $year = $("#yearList").val();
-    $day = $("#dayList").val();
-    $dayValue = $day.replace(/,/g, '');
-    
-    $deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>' + $department + '</h5> <h5>' + ($month == 'All Months' || $year != 'All Years' ? $month: 'Month of ' + $month) + ($year == 'All Years' ? '': ' of '+$year)+'</h5><h5>'+($dayValue == 'All Days' || $dayValue == '1st Week' || $dayValue == '2nd Week' || $dayValue == '3rd Week' || $dayValue == '4th Week' || $dayValue == '5th Week' ? $dayValue: 'Day '+$dayValue)+'</h5>';
-    $('#listHeader').append($deptMonth);
+    $startDate = $('#startDate').val();
+    $endDate = $('#endDate').val();
+    $department = $('#deptList').val();
+ 
+    //$deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>All Departments</h5>';
+    //$('#listHeader').append($deptMonth);
     $('#listHeader').show(500);
     $('#displayTab').show(500);
     
-    retrieveList($department, $reason, $month, $year, $day);
+    retrieveList($startDate, $endDate, $department);
 });
 
 $('#print-display').on('click', function() {
     window.print();
 });
 
-function retrieveList(department, reason, month, year, day){
+function retrieveList(startDate, endDate, department){
     fetch('../server/server.php', {
         method: 'POST',
         body: new URLSearchParams({
+            startDate: startDate,
+            endDate: endDate,
             department: department,
-            reason: reason,
-            month: month,
-            year: year,
-            day: day,
             loc: 'retrieveList'
         }),
     })
     .then(response => response.json())
     .then(studentResult => {
         console.log(studentResult);
-        $('#displayTabTable').append("<tr><th>Name</th><th>Student ID #</th><th>Reason</th><th>Date</th></tr>");
+        $('#displayTabTable').append('<tr><th>Name <select id="nameSort"name="nameSort"style="float:right"><option value="Ascending">Ascending<option value="Descending">Descending</select><th>Student ID #<th>Reason<th>Date <select id="dateSort"name="dateSort"style="float:right"><option value="Ascending">Ascending<option value="Descending">Descending</select>');
         if (studentResult.length == 0) {
             $('#displayTabTable').append('<tr><td style="text-align:center;"colspan="4">No Record Found</td></tr>');
         } else {
@@ -293,17 +291,82 @@ function retrieveList(department, reason, month, year, day){
                 $('#displayTabTable').append($listDisplay);
             });  
         }
+
+        sortName("Ascending");
+        $('#nameSort').change(function() {
+            var sort = $(this).val();
+            sortName(sort);
+        });
+        $('#dateSort').change(function() {
+            var sort = $(this).val();
+            sortDate(sort);
+        });
     })
     .catch(error => console.error(error));	
+}
+function sortDate(sort) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("displayTabTable");
+    switching = true;
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[3];
+            y = rows[i + 1].getElementsByTagName("TD")[3];
+            if(sort == "Ascending"){
+                if (new Date(x.innerHTML) > new Date(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }else{
+                if (new Date(x.innerHTML) < new Date(y.innerHTML)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
+function sortName(sort) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("displayTabTable");
+    switching = true;
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[0];
+            y = rows[i + 1].getElementsByTagName("TD")[0];
+            if(sort == "Ascending"){
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }else{
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
 }
 
 /*
 function randomData(){
 
-    const months = [
-        'January', 'February', 'March', 'April', 'May', 'June', 
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
     const reasons = ['Lost', 'Forgot', 'Did not process ID yet', 'ID lost, on process for renewal',
      'Misplaced', 'Confiscated', 'Deposited'];
 
@@ -311,11 +374,15 @@ function randomData(){
     'College of Criminal Justice Education', 'College of Arts and Sciences', 'College of Business Administration', 'College of Engineering and Architecture',
     'College of Hospitality and Tourism Management', 'College of Nursing', 'College of Law',
     ];
-    
-    const year = Math.floor(Math.random() * (2023 - 2020 + 1)) + 2020;
-    
-    const monthIndex = Math.floor(Math.random() * months.length);
-    const month = months[monthIndex];
+    const firstNames = ['Alice', 'Benjamin', 'Caroline', 'David', 'Emily', 'Frank', 'Grace', 'Henry', 'Isabel', 'Jacob', 'Katherine', 'Lucas', 'Megan', 'Nathan', 'Olivia', 'Peter', 'Quentin', 'Rachel', 'Samantha', 'Thomas', 'Ursula', 'Victoria', 'William', 'Xander', 'Yvonne', 'Zachary'];
+
+    const lastNames = ['Adams', 'Baker', 'Carter', 'Davis', 'Evans', 'Fisher', 'Gomez', 'Harris', 'Ingram', 'Johnson', 'Khan', 'Lee', 'Mitchell', 'Nguyen', 'Olsen', 'Perez', 'Quinn', 'Robinson', 'Sato', 'Thompson', 'Underwood', 'Valdez', 'Williams', 'Xu', 'Yang', 'Zhang'];
+
+    const lnameIndex = Math.floor(Math.random() * lastNames.length);
+    const lastName = lastNames[lnameIndex];
+
+    const fnameIndex = Math.floor(Math.random() * firstNames.length);
+    const firstName = firstNames[fnameIndex];
 
     const reasonIndex = Math.floor(Math.random() * reasons.length);
     const reason = reasons[reasonIndex];
@@ -323,14 +390,23 @@ function randomData(){
     const departmentIndex = Math.floor(Math.random() * departments.length);
     const department= departments[departmentIndex];
     
-    const day = Math.floor(Math.random() * 31) + 1;
+    let startDate = new Date(2023, 0, 1); // January 1, 2022
+    let endDate = new Date(2023, 11, 31); // December 31, 2022
     
-    const dateString = `${month} ${day}, ${year}`;
+    let randomDates = randomDate(startDate, endDate);
+    const formattedDate = randomDates.toISOString().slice(0, 10);
+    console.log(formattedDate);
     
-    return { date: dateString, reason: reason, department: department };
+    return { date: formattedDate, reason: reason, department: department, lname: lastName, fname: firstName};
 }
 
-for(let i = 0; i< 100; i++){
-    addToDB("Rivia, Geralt", "18-1690-714", randomData().reason, randomData().date, randomData().department);
+function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
+
+ 
+
+for(let i = 0; i< 200; i++){
+    addToDB(""+randomData().fname+", "+randomData().lname+"", "18-1690-714", randomData().reason, randomData().date, randomData().department);
 }
 */

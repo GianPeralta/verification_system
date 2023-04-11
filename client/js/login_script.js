@@ -22,7 +22,7 @@ loginForm.addEventListener('submit', (event) => {
             localStorage.setItem('userToken', token);
             localStorage.setItem('userName', data[0].name);
             localStorage.setItem('userPos', data[0].position);
-            window.location.href = 'verification.html';
+            window.location.href = 'index.html';
         } else {
             errorMessage.textContent = 'Invalid username or password';
             $('#username').val('');
@@ -47,6 +47,6 @@ function generateToken(length) {
 }
 
 if (localStorage.getItem('userToken') !== null) {
-    window.location.href = 'verification.html';
+    window.location.href = 'index.html';
 }
 
