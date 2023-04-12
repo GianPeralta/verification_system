@@ -282,16 +282,52 @@ function retrieveList(startDate, endDate, department){
     .then(response => response.json())
     .then(studentResult => {
         console.log(studentResult);
-        $('#displayTabTable').append('<tr><th>Name <select id="nameSort"name="nameSort"style="float:right"><option value="Ascending">Ascending<option value="Descending">Descending</select><th>Student ID #<th>Reason<th>Date <select id="dateSort"name="dateSort"style="float:right"><option value="Ascending">Ascending<option value="Descending">Descending</select>');
-        if (studentResult.length == 0) {
-            $('#displayTabTable').append('<tr><td style="text-align:center;"colspan="4">No Record Found</td></tr>');
-        } else {
-            studentResult.forEach(function(student) {
-                $listDisplay = '<tr><td>' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.reason + '</td><td>' + student.date + '</td></tr>';
-                $('#displayTabTable').append($listDisplay);
-            });  
-        }
+        $('#displayTabTable').append(`
+            <thead>
+                <tr>
+                    <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;">
+                        <h3>UNIVERSITY OF THE CORDILLERAS</h3>
+                        <h5>Governor Pack Rd. Baguio City</h5>
+                        <h4>Occupational Safety and Health Office</h4>
+                        <h5>List of Student Without ID</h5>
 
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        Name 
+                        <select id="nameSort"name="nameSort"style="float:right">
+                            <option value="Ascending">Ascending</option>
+                            <option value="Descending">Descending</option>
+                        </select>
+                    </th>
+                    <th>
+                        Student ID #
+                    </th>
+                    <th>
+                        Reason
+                    </th>
+                    <th>
+                        Date 
+                        <select id="dateSort"name="dateSort"style="float:right">
+                            <option value="Ascending">Ascending</option>
+                            <option value="Descending">Descending</option>
+                        </select>
+                    </th>
+                </tr>
+            </thead>`);
+        if (studentResult.length == 0) {
+            $('#displayTabTable').append('<tbody><tr><td style="text-align:center;"colspan="4">No Record Found</td></tr></tbody>');
+        } else {
+            var $newElement = $('<tbody></tbody>');
+            studentResult.forEach(function(student) {
+                var $listDisplay = '<tr><td>' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.reason + '</td><td>' + student.date + '</td></tr>';
+                $newElement.append($listDisplay);          
+            });  
+            $('#displayTabTable').append($newElement);
+            $('#displayTabTable').append(`<tfoot></tfoot>`);
+        }
+//<tfoot><tr><td></td></tr><td colspan="4">Table footer</td></tfoot>
         sortName("Ascending");
         $('#nameSort').change(function() {
             var sort = $(this).val();
@@ -305,63 +341,66 @@ function retrieveList(startDate, endDate, department){
     .catch(error => console.error(error));	
 }
 function sortDate(sort) {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById("displayTabTable");
-    switching = true;
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[3];
-            y = rows[i + 1].getElementsByTagName("TD")[3];
-            if(sort == "Ascending"){
-                if (new Date(x.innerHTML) > new Date(y.innerHTML)) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }else{
-                if (new Date(x.innerHTML) < new Date(y.innerHTML)) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
+  var table, tbody, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById("displayTabTable");
+  tbody = table.getElementsByTagName("tbody")[0];
+  switching = true;
+  while (switching) {
+    switching = false;
+    rows = tbody.rows;
+    for (i = 0; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[3];
+      y = rows[i + 1].getElementsByTagName("td")[3];
+      if (sort == "Ascending") {
+        if (new Date(x.innerHTML) > new Date(y.innerHTML)) {
+          shouldSwitch = true;
+          break;
         }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
+      } else {
+        if (new Date(x.innerHTML) < new Date(y.innerHTML)) {
+          shouldSwitch = true;
+          break;
         }
+      }
     }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
 }
 
+
 function sortName(sort) {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById("displayTabTable");
-    switching = true;
-    while (switching) {
-        switching = false;
-        rows = table.rows;
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[0];
-            y = rows[i + 1].getElementsByTagName("TD")[0];
-            if(sort == "Ascending"){
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }else{
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
+  var table, tbody, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById("displayTabTable");
+  tbody = table.getElementsByTagName("tbody")[0];
+  switching = true;
+  while (switching) {
+    switching = false;
+    rows = tbody.rows;
+    for (i = 0; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("td")[0];
+      y = rows[i + 1].getElementsByTagName("td")[0];
+      if (sort == "Ascending") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
         }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
+      } else {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
         }
+      }
     }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
 }
 
 /*
