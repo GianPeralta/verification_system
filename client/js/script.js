@@ -269,6 +269,21 @@ $('#print-display').on('click', function() {
     window.print();
 });
 
+function formattedDate(date){
+
+    // Parse the date string into a Date object
+    var dateObj = new Date(date);
+
+    // Define an array of month names
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    // Format the date as "Month Day, Year"
+    var formattedDate = monthNames[dateObj.getMonth()] + " " + dateObj.getDate() + ", " + dateObj.getFullYear();
+
+    // Use the formatted date as needed
+    return formattedDate;
+}
+
 function retrieveList(startDate, endDate, department){
     fetch('../server/server.php', {
         method: 'POST',
@@ -281,7 +296,8 @@ function retrieveList(startDate, endDate, department){
     })
     .then(response => response.json())
     .then(studentResult => {
-        console.log(studentResult);
+        console.log(department);
+        console.log(formattedDate(startDate));
         $('#displayTabTable').append(`
             <thead>
                 <tr>
@@ -290,6 +306,8 @@ function retrieveList(startDate, endDate, department){
                         <h5>Governor Pack Rd. Baguio City</h5>
                         <h4>Occupational Safety and Health Office</h4>
                         <h5>List of Student Without ID</h5>
+                        <h5>`+department+`</h5>
+                        <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5>
 
                     </th>
                 </tr>
