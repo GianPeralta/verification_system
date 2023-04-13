@@ -68,18 +68,6 @@ td{
     font-size: 25px;
 }
 
-.bg-sayotz{
-    padding: 10px;
-    border-radius: 5px 5px 5px 5px;
-    border: .5px solid rgb(200,200,200);
-    color:black !important;
-    font-weight: bold;
-    font-size: 18px;
-    width: 97%;
-}
-.bg-sayotz::placeholder{		
-    color:rgb(75,75,75) !important;
-}
 #header{
     display: flex;
     box-sizing: border-box;
@@ -161,12 +149,14 @@ button {
     }
 }
 #login-form {
+    min-width: 500px;
     max-width: 500px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #34495e;
+    background-color: #009688;
     border-radius: 5px;
     color: white;
+
 }
 
 #login-form input[type="text"], input[type="password"] {
@@ -174,8 +164,8 @@ button {
     padding: 10px;
     margin-bottom: 20px;
     border: none;
-    background-color: #95a5a6;
-    color: #fff;
+    background-color: #f2f2f2;
+    color: black;
     border-radius: 5px;
 }
 

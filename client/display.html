@@ -1,40 +1,23 @@
 <!DOCTYPE HTML>
 <HTML>
 <HEAD>
+    <title>Gate Pass Record</title>
 	<script language="javascript" type="text/javascript" src="./js/jquery-3.6.4.js"></script>
 	<link rel="stylesheet" href="./css/style.css">
     <style>
       @media print {
-
-        thead {
-          display: table-header-group;
-        }
-      
-        tfoot {
-          display: table-footer-group;
-        }
-      
-        tfoot:before {
-          content: "Footer text";
-        }
-
+        @page {
+            size: A4;
+            margin: 1cm;
+          }
         table tbody tr{
             page-break-inside: avoid;
           }
-      
-        #header2 {
-          position: fixed;
-          top: 0;
-          background-color: #ccc;
-          padding: 10px;
-          width: 100%;
-          height: 50px;
-        }
         #displayTabTable{
             margin-top: 500px;
         }
-       
       }
+
     </style>
 </head>
 <body>
@@ -101,19 +84,48 @@
         <table></table>
     </div>
 
-    <div style="width: 100%; margin-top: 27px;" hidden id="displayTab">
-        <table style="width: 80%; margin: 0 auto;" id="displayTabTable">
+    <div style="width: 100%;" hidden id="displayTab">
+        <table style="width: 90%; margin: 0 auto;" id="displayTabTable">
 
         </table>
+
     </div>
+
     <footer>
 		<p>&copy; 2023 University of the Cordilleras. All Rights Reserved.</p>
 	</footer>
     <script src="./js/script.js"></script>
-    <script>
-        for($day = 1; $day <= 31; $day++){
-            $('#dayList').append('<option value="'+$day+',">'+$day+'</option>');
-        }
+    <script type="text/javascript">
+        window.addEventListener("beforeprint", function() {
+            var tahead = document.getElementById('display-head');
+            tahead.style.display="table-row";
+            var rows = document.querySelectorAll('#displayTabTable tbody tr');
+            console.log(rows);
+            counter=1;
+            for (var i = 0; i < rows.length; i++) {
+                if ((i + 1) % 33 === 0) {
+                    var newRow = document.createElement('tr');
+                    newRow.setAttribute('style', 'font-size: 10px; font-weight: bold; border: none;');
+                    newRow.innerHTML = '<td colspan="4" class="page-numbers" style="text-align:right; border:none;">Page '+counter+'</td>';
+                    rows[i].parentNode.insertBefore(newRow, rows[i].nextSibling);
+                    counter++;
+                } else if (i == rows.length-1){
+                    var newRow = document.createElement('tr');
+                    newRow.setAttribute('style', 'font-size: 10px; font-weight: bold; border: none;');
+                    newRow.innerHTML = '<td colspan="4" class="page-numbers" style="text-align:right; border:none;">Page '+counter+'</td>';
+                    rows[rows.length - 1].parentNode.insertBefore(newRow, null);
+                    counter++;
+                }
+            } 
+        });
+        window.addEventListener('afterprint', function() {
+            var tahead = document.getElementById('display-head');
+            tahead.style.display = 'none';
+            var pageNum = document.querySelectorAll('.page-numbers');
+            for (var i = 0; i < pageNum.length; i++) {
+                pageNum[i].parentNode.removeChild(pageNum[i]);
+            }
+        });
     </script>
 </body>
 </html>

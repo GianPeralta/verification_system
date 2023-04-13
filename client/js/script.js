@@ -268,19 +268,10 @@ $('#submit-button').on('click', function() {
 $('#print-display').on('click', function() {
     window.print();
 });
-
 function formattedDate(date){
-
-    // Parse the date string into a Date object
     var dateObj = new Date(date);
-
-    // Define an array of month names
     var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    // Format the date as "Month Day, Year"
     var formattedDate = monthNames[dateObj.getMonth()] + " " + dateObj.getDate() + ", " + dateObj.getFullYear();
-
-    // Use the formatted date as needed
     return formattedDate;
 }
 
@@ -298,42 +289,7 @@ function retrieveList(startDate, endDate, department){
     .then(studentResult => {
         console.log(department);
         console.log(formattedDate(startDate));
-        $('#displayTabTable').append(`
-            <thead>
-                <tr>
-                    <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;">
-                        <h3>UNIVERSITY OF THE CORDILLERAS</h3>
-                        <h5>Governor Pack Rd. Baguio City</h5>
-                        <h4>Occupational Safety and Health Office</h4>
-                        <h5>List of Student Without ID</h5>
-                        <h5>`+department+`</h5>
-                        <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5>
-
-                    </th>
-                </tr>
-                <tr>
-                    <th>
-                        Name 
-                        <select id="nameSort"name="nameSort"style="float:right">
-                            <option value="Ascending">Ascending</option>
-                            <option value="Descending">Descending</option>
-                        </select>
-                    </th>
-                    <th>
-                        Student ID #
-                    </th>
-                    <th>
-                        Reason
-                    </th>
-                    <th>
-                        Date 
-                        <select id="dateSort"name="dateSort"style="float:right">
-                            <option value="Ascending">Ascending</option>
-                            <option value="Descending">Descending</option>
-                        </select>
-                    </th>
-                </tr>
-            </thead>`);
+        $('#displayTabTable').append(`<thead><tr id="display-head" style="display: none;"> <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;"> <h3>UNIVERSITY OF THE CORDILLERAS</h3> <h5>Governor Pack Rd. Baguio City</h5> <h4>Occupational Safety and Health Office</h4> <h5>List of Student Without ID</h5> <h5>`+department+`</h5> <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5> </th> </tr><tr> <th> Name <select id="nameSort"name="nameSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> <th> Student ID # </th> <th> Reason </th> <th> Date <select id="dateSort"name="dateSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> </tr></thead>`);
         if (studentResult.length == 0) {
             $('#displayTabTable').append('<tbody><tr><td style="text-align:center;"colspan="4">No Record Found</td></tr></tbody>');
         } else {
@@ -343,15 +299,16 @@ function retrieveList(startDate, endDate, department){
                 $newElement.append($listDisplay);          
             });  
             $('#displayTabTable').append($newElement);
+            //$('#displayTabTable').append(`<tfoot><tr><td><span class="page-number">Page</span></td></tr></tfoot>`);
             $('#displayTabTable').append(`<tfoot></tfoot>`);
         }
 //<tfoot><tr><td></td></tr><td colspan="4">Table footer</td></tfoot>
         sortName("Ascending");
-        $('#nameSort').change(function() {
+        $('#nameSort').click(function() {
             var sort = $(this).val();
             sortName(sort);
         });
-        $('#dateSort').change(function() {
+        $('#dateSort').click(function() {
             var sort = $(this).val();
             sortDate(sort);
         });
@@ -418,7 +375,10 @@ function sortName(sort) {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
       switching = true;
     }
+
   }
+  
+
 }
 
 /*
