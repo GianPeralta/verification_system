@@ -5,11 +5,15 @@ loginForm.addEventListener('submit', (event) => {
     event.preventDefault();
     $username = $('#username').val();
     $password = $('#password').val();
+    login($username, $password);
+});
+
+function login(username, password){
     fetch('../server/server.php', {
         method: 'POST',
         body: new URLSearchParams({
-            username: $username,
-            password: $password,
+            username: username,
+            password: password,
             loc: 'logIn'
         }),
     })
@@ -34,8 +38,8 @@ loginForm.addEventListener('submit', (event) => {
     .catch(error => {
         errorMessage.textContent = `Login failed with error code: ${error.message}`;
     });
+}
 
-});
 function generateToken(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
