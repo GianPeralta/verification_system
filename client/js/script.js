@@ -251,18 +251,20 @@ const monthList = document.getElementById("monthList");
 
 
 $('#submit-button').on('click', function() {
-    $('#listHeader').empty();
     $('#displayTabTable').empty();
     $startDate = $('#startDate').val();
     $endDate = $('#endDate').val();
     $department = $('#deptList').val();
- 
-    //$deptMonth = '<h3>UNIVERSITY OF THE CORDILLERAS</h3><h5>Governor Pack Rd. Baguio City</h5><h4>Occupational Safety and Health Office</h4><h5>List of Student Without ID</h5><h5>All Departments</h5>';
-    //$('#listHeader').append($deptMonth);
-    $('#listHeader').show(500);
-    $('#displayTab').show(500);
-    
-    retrieveList($startDate, $endDate, $department);
+    if (new Date($startDate) > new Date($endDate)) {
+        $('#displayTab').show(500);
+        $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please check date interval</td></tr>`);
+    }else if ($startDate === '' || $startDate === '') {
+        $('#displayTab').show(500);
+        $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please enter start and end date</td></tr>`);
+    }else{
+        $('#displayTab').show(500);
+        retrieveList($startDate, $endDate, $department);
+    }
 });
 
 $('#print-display').on('click', function() {
@@ -295,7 +297,7 @@ function retrieveList(startDate, endDate, department){
         } else {
             var $newElement = $('<tbody></tbody>');
             studentResult.forEach(function(student) {
-                var $listDisplay = '<tr><td>' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.reason + '</td><td>' + student.date + '</td></tr>';
+                var $listDisplay = '<tr><td style="max-width:200px; overflow: hidden; white-space: nowrap;">' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.reason + '</td><td>' + student.date + '</td></tr>';
                 $newElement.append($listDisplay);          
             });  
             $('#displayTabTable').append($newElement);
