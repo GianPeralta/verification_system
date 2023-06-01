@@ -2,19 +2,19 @@ const token = localStorage.getItem('userToken');
 fetch('../server/token_check.php', {
     method: 'POST',
     body: new URLSearchParams({
-        token: token,
+      token: token,
     }),
 })
 .then(response => {
-    if (response.ok) {
-        
-    }else{
-        window.location.href = 'login.html';
+    if (!response.ok) {
+    throw new Error('Response not OK');
     }
 })
 .catch(error => {
     console.error('Error:', error);
+    window.location.replace('login.html');
 });
+  
 
 $('#userTab').append('<h2 style="padding-left:15px;">'+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</h2>');
 
