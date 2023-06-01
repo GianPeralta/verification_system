@@ -1,13 +1,27 @@
-
-if (localStorage.getItem('userToken') === null) {
-    window.location.href = 'login.html';
-} 
+const token = localStorage.getItem('userToken');
+fetch('../server/token_check.php', {
+    method: 'POST',
+    body: new URLSearchParams({
+        token: token,
+    }),
+})
+.then(response => {
+    if (response.ok) {
+        
+    }else{
+        window.location.href = 'login.html';
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+});
 
 $('#userTab').append('<h2 style="padding-left:15px;">'+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</h2>');
 
 $('#logout').on('click', function() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userPos');
     window.location.href = 'login.html';
 });
 
@@ -71,11 +85,10 @@ function getFormattedDateTime() {
 }
 
 function fetchStudentsDetails(ui) {
-    fetch('../server/server.php', {
+    fetch('../server/stud_det_server.php', {
       method: 'POST',
       body: new URLSearchParams({
-        str: ui,
-        loc: 'verifyResult'
+        str: ui
       }),
     })
     .then(response => response.json())
@@ -175,11 +188,10 @@ function fetchStudent(ui) {
     $('#gatePass').empty();
     $('#studentDetailsTable').empty();			
     if(ui.length>=2){
-        fetch('../server/server.php', {
+        fetch('../server/stud_list_server.php', {
             method: 'POST',
             body: new URLSearchParams({
-                str: ui,
-                loc: 'studentResult'
+                str: ui
             }),
         })
         .then(response => response.json())
@@ -221,17 +233,15 @@ function fetchStudent(ui) {
         $('#searchErrorMessage').empty();
     }			
 }
-
 function addToDB(name, student_id, reason, date, department) {
-    fetch('../server/server.php', {
+    fetch('../server/insert_rec_server.php', {
         method: 'POST',
         body: new URLSearchParams({
             name: name,
             student_id: student_id,
             reason: reason,
             date: date,
-            department: department,
-            loc: 'addToDb'
+            department: department
         }),
     })
     .then(response => {
@@ -278,13 +288,12 @@ function formattedDate(date){
 }
 
 function retrieveList(startDate, endDate, department){
-    fetch('../server/server.php', {
+    fetch('../server/display_server.php', {
         method: 'POST',
         body: new URLSearchParams({
             startDate: startDate,
             endDate: endDate,
-            department: department,
-            loc: 'retrieveList'
+            department: department
         }),
     })
     .then(response => response.json())
