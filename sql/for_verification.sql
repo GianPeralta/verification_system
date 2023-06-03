@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2023 at 03:02 AM
+-- Generation Time: Jun 01, 2023 at 10:55 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -2932,7 +2932,14 @@ INSERT INTO `display_record` (`id`, `name`, `student_id`, `reason`, `date`, `dep
 (2900, 'Nathan, Lee', '18-1690-714', 'Did not process ID yet', '2023-12-26', 'College of Hospitality and Tourism Management'),
 (2901, 'Thomas, Perez', '18-1690-714', 'Forgot', '2023-08-14', 'College of Accountancy'),
 (2902, 'Peter, Williams', '18-1690-714', 'Did not process ID yet', '2023-06-08', 'College of Teacher Education'),
-(2903, 'Wick, John', '20-3213-756', 'Did not process ID yet', '2023-04-11', 'College of Criminal Justice Education');
+(2903, 'Wick, John', '20-3213-756', 'Did not process ID yet', '2023-04-11', 'College of Criminal Justice Education'),
+(2904, 'Wick, John', '20-3213-756', 'Did not process ID yet', '2023-05-17', 'College of Criminal Justice Education'),
+(2905, 'Wise, Penny', '19-7453-082', 'Others: hea', '2023-05-17', 'College of Engineering and Architecture'),
+(2906, 'Wick, John', '20-3213-756', 'Did not process ID yet', '2023-05-18', 'College of Criminal Justice Education'),
+(2907, 'Warden, Thresh', '19-2356-856', 'Forgot', '2023-05-20', 'College of Accountancy'),
+(2908, 'Warden, Thresh', '19-2356-856', 'Did not process ID yet', '2023-05-20', 'College of Accountancy'),
+(2909, 'Wick, John', '20-3213-756', 'Forgot', '2023-05-20', 'College of Criminal Justice Education'),
+(2910, 'Wick, John', '20-3213-756', 'ID lost, on process for renewal', '2023-05-20', 'College of Criminal Justice Education');
 
 -- --------------------------------------------------------
 
@@ -2975,6 +2982,24 @@ INSERT INTO `student` (`id`, `name`, `student_id`, `department`, `course`, `year
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `token`
+--
+
+CREATE TABLE `token` (
+  `id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `token`
+--
+
+INSERT INTO `token` (`id`, `token`) VALUES
+(1, '2FApz0fJLSKAwMgFUuQrYEF58y2Xu2bvWntwBUtyNlkhsDsjtb');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -2993,7 +3018,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `emp_id`, `username`, `password`, `name`, `position`) VALUES
 (1, '300192', 'test123', 'b316e256ea477cfeeb849f6fd5c1150f', 'Dianna D. Ang', 'SO'),
-(2, '123122', 'gian22', '646392d18b18e04058d68bfb210e4a36', 'Gian K. Peralta', 'PO');
+(2, '123122', 'gian22', '646392d18b18e04058d68bfb210e4a36', 'Gian K. Peralta', 'PO'),
+(3, '546467', 'gian2', 'b316e256ea477cfeeb849f6fd5c1150f', 'Gian Peralta', 'Guard');
 
 --
 -- Indexes for dumped tables
@@ -3012,6 +3038,12 @@ ALTER TABLE `student`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `token`
+--
+ALTER TABLE `token`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -3025,7 +3057,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `display_record`
 --
 ALTER TABLE `display_record`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2904;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2911;
 
 --
 -- AUTO_INCREMENT for table `student`
@@ -3034,10 +3066,16 @@ ALTER TABLE `student`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `token`
+--
+ALTER TABLE `token`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
