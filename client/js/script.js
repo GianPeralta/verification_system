@@ -1,5 +1,10 @@
 const token = localStorage.getItem('userToken');
-checkTokenValidity(token);
+if(token != null){
+    checkTokenValidity(token);
+}else{
+    window.location.replace('login.html');
+}
+
 function checkTokenValidity(token) {
     fetch('../server/token_check.php', {
         method: 'POST',
@@ -18,7 +23,6 @@ function checkTokenValidity(token) {
     });
 }
   
-
 $('#userTab').append('<h2 style="padding-left:15px;">'+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</h2>');
 
 $('#logout').on('click', function() {
@@ -52,7 +56,7 @@ let clickProcessed = false;
 $('#searchResults').on('click','tr:not(:first)', function(){
     if (!clickProcessed) {
         clickProcessed = true;
-        $UI =$(this).attr('idn');
+        $UI =$(this).attr('ui');
         fetchStudentsDetails($UI);
         setTimeout(() => {
             clickProcessed = false;
@@ -75,17 +79,21 @@ function check(inp, chk1, chk2, chk3, chk4, chk5, chk6, chk7, chk8, val){
 
 function getFormattedDateTime() {
     const date = new Date();
-
+  
     const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
     const formattedDate = date.toLocaleDateString('en-US', dateOptions);
-
-    const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  
+    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
     const formattedTime = date.toLocaleTimeString('en-US', timeOptions);
-
-    const unFormattedDate = date.toISOString().slice(0, 10);
-
-    return { date: formattedDate, time: formattedTime, unFoDate: unFormattedDate};
-}
+  
+    const unformattedDate = date.toISOString().slice(0, 10);
+  
+    const unformattedTimeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+    const unformattedTime = date.toLocaleTimeString('en-US', unformattedTimeOptions);
+  
+    return { date: formattedDate, time: formattedTime, unFoDate: unformattedDate, unFoTime: unformattedTime };
+  }
+  
 
 function fetchStudentsDetails(ui) {
     fetch('../server/stud_det_server.php', {
@@ -95,31 +103,39 @@ function fetchStudentsDetails(ui) {
       }),
     })
     .then(response => response.json())
-        .then(studentResult => {
-            console.log(studentResult);
-            const student = {
-                name: studentResult[0].name,
-                id: studentResult[0].student_id,
-                department: studentResult[0].department,
-                course: studentResult[0].course,
-                yearLevel: studentResult[0].year_level,
-                sex: studentResult[0].sex,
-                lastEnrollment: studentResult[0].last_enrollment,
-                yearGraduated: studentResult[0].year_graduated,
-                date: getFormattedDateTime().date,
-                unFormattedDate : getFormattedDateTime().unFoDate,
-                time: getFormattedDateTime().time,
-                pic: studentResult[0].image_data
-            };
+        .then(student => {
             console.log(student);
+            $verified = '<tr><td colspan="3" style="text-align: center; font-weight:bold; background-color: ' + (student.lastEnrollment == '2nd Trimester S.Y. 2022-2023' ? '#00b050;">Student Currently Enrolled' : '#ff0000;">Student Currently not Enrolled') + '</td></tr><tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>' + student.lastEnrollment + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br>';
+            $confirmed = '<tr style="position:relative"> <td colspan="2"> <img src="./img/logo.png" alt="" width="90px" style="padding-left:5px"> <span style="position:absolute;bottom:5px;right:2px;font-size:8px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span> </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr> <td>Date: ' + getFormattedDateTime().date + '</td><td>Entry Time: ' + getFormattedDateTime().time + '</td></tr><tr> <td colspan="2">Name: '+ student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname +' </td></tr><tr> <td colspan="2">Course & Year Level: ' + student['res'][0][0].course_code + ' ' + student['res'][0][0].year_level + ' </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr> <td style="width:50%">';
             
-            $verified = '<tr><td colspan="3" style="text-align: center; font-weight:bold; background-color: ' + (student.lastEnrollment == '2nd Trimester S.Y. 2022-2023' ? '#00b050;">Student Currently Enrolled' : '#ff0000;">Student Currently not Enrolled') + '</td></tr><tr><td width="30%">Name:</td><td width="40%">' + student.name + '</td><td rowspan="8" width="30%"><img src="data:image/jpeg;base64,' + student.pic + '" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student.id + '</td></tr><tr><td>Dept.:</td><td>' + student.department + '</td></tr><tr><td>Course:</td><td>' + student.course + '</td></tr><tr><td>Year Level:</td><td>' + student.yearLevel + '</td></tr><tr><td>Sex:</td><td>' + student.sex + '</td></tr><tr><td>Last Enrollment:</td><td>' + student.lastEnrollment + '</td></tr><tr><td>Year Graduated:</td><td>' + student.yearGraduated + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br><input type="radio" name="option" value="Lost" id="option1"><label for="option1">Lost</label><br><input type="radio" name="option" value="Forgot" id="option2"><label for="option2">Forgot</label><br><input type="radio" name="option" value="Did not process ID yet" id="option3"><label for="option3">Did not process ID yet</label><br><input type="radio" name="option" value="ID lost, on process for renewal" id="option4"><label for="option4">ID lost, on process for renewal</label><br><input type="radio" name="option" value="Misplaced" id="option5"><label for="option5">Misplaced</label><br><input type="radio" name="option" value="Confiscated" id="option6"><label for="option6">Confiscated</label><br><input type="radio" name="option" value="Deposited" id="option7"><label for="option7">Deposited</label><br><input type="radio" name="option" value="Others" id="option8"><label for="option8">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button></td></tr>';
+            var reasonsLeft = '';
+            var reasonsRight = '';
+            var reasons = student['res'][1];
+            console.log(reasons);
+            var halfLength = Math.ceil(reasons.length / 2);
+
+            for (var i = 0; i < reasons.length; i++) {
+                var reason = reasons[i];
+                if(reason['r_index'] !== '999'){
+                    var reasonHtml = '<input type="checkbox" id="checkbox' + reason['r_index'] + '" name="checkbox' + reason['r_index'] + '" value="' + reason['description'] + '"> <label for="checkbox' + reason['r_index'] + '">' + reason['description'] + '</label> <br>';
+                
+                    if (i < halfLength) {
+                    reasonsLeft += reasonHtml;
+                    } else {
+                    reasonsRight += reasonHtml;
+                    }
+
+                    $reason2 = '<input type="radio" name="option" value="'+ reason['description'] +'" id="' + reason['r_index'] + '"><label for="' + reason['r_index'] + '">'+ reason['description'] +'</label><br>';
+                    $verified += $reason2;
+                }
+            }
+            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr>';
             $('#studentDetailsTable').append($verified);
             $('#studentDetails').fadeIn(1500);
             
-            $confirmed = '<tr style="position:relative"> <td colspan="2"> <img src="./img/logo.png" alt="" width="90px" style="padding-left:5px"> <span style="position:absolute;bottom:5px;right:2px;font-size:8px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span> </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr> <td>Date: ' + student.date + '</td><td>Entry Time: ' + student.time + '</td></tr><tr> <td colspan="2">Name: '+ student.name +' </td></tr><tr> <td colspan="2">Course & Year Level: '+ student.course + ' ' + student.yearLevel +' </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr> <td style="width:50%"> <input type="checkbox" id="checkbox1" name="checkbox1" value="Lost"> <label for="checkbox1">Lost</label> <br><input type="checkbox" id="checkbox2" name="checkbox2" value="Forgot"> <label for="checkbox2">Forgot</label> <br><input type="checkbox" id="checkbox3" name="checkbox3" value="Did not process ID yet"> <label for="checkbox3">Did not process ID yet</label> <br><input type="checkbox" id="checkbox4" name="checkbox4" value="ID lost, on process for renewal"> <label for="checkbox4">ID lost, on process <br>for renewal </label> <br></td><td style="padding-right:20px;width:50%"> <input type="checkbox" id="checkbox5" name="checkbox5" value="Misplaced"> <label for="checkbox5">Misplaced</label> <br><input type="checkbox" id="checkbox6" name="checkbox6" value="Confiscated"> <label for="checkbox6">Confiscated</label> <br><input type="checkbox" id="checkbox7" name="checkbox7" value="Deposited"> <label for="checkbox7">Deposited</label> <br><input type="checkbox" id="checkbox8" name="checkbox8" value="Others"> <label for="checkbox8">Others:</label> <br><input type="text" id="others" style="border:none;font-size:9px;border-bottom:1px solid #000;width:100%;background-color:transparent"> </td></tr><tr> <td colspan="2" style="font-style:italic;font-weight:700;text-align:center;">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr> <td colspan="2"> <div style="width:70%;margin:0 auto;text-align:center;padding-top:15px;"> <hr> <span style="font-weight:700">Student Signature</span> </div></td></tr><tr> <td colspan="2"> <div style="margin:0 auto;text-align:center; padding-top: 15px;padding-bottom: 4px;"> <span style="text-decoration-line:underline; font-size:10px;">'+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +' / '+ student.date +'</span> <br><span style="font-weight:700;font-size:8px;">Issuing Officer</span> <br><span style="font-size:8px;">(Name | Signature | Date)</span> </div></td></tr><tr> <td colspan="2" style="padding:0 0 0 3px;">UC-OSH-FORM-03 <br>May 26, 2022 Rev.01 </td></tr>';
+            $confirmed += reasonsLeft + '</td><td style="padding-right:20px;width:50%">' + reasonsRight + '<input type="checkbox" id="checkbox999" name="checkbox999" value="Others"> <label for="checkbox999">Others:</label> <br><input type="text" id="others" style="border:none;font-size:9px;border-bottom:1px solid #000;width:100%;background-color:transparent"> </td></tr><tr> <td colspan="2" style="font-style:italic;font-weight:700;text-align:center;">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr> <td colspan="2"> <div style="width:70%;margin:0 auto;text-align:center;padding-top:15px;"> <hr> <span style="font-weight:700">Student Signature</span> </div></td></tr><tr> <td colspan="2"> <div style="margin:0 auto;text-align:center; padding-top: 15px;padding-bottom: 4px;"> <span style="text-decoration-line:underline; font-size:10px;">' + localStorage.getItem('userPos') + ' ' + localStorage.getItem('userName') + ' / ' + getFormattedDateTime().date + '</span> <br><span style="font-weight:700;font-size:8px;">Issuing Officer</span> <br><span style="font-size:8px;">(Name | Signature | Date)</span> </div></td></tr><tr> <td colspan="2" style="padding:0 0 0 3px;">UC-OSH-FORM-03 <br>May 26, 2022 Rev.01 </td></tr>';
             $('#gatePass').append($confirmed);
-            
+
             $('#searchResults').hide();
           
             $('#other_option').prop('disabled', true);
@@ -129,50 +145,36 @@ function fetchStudentsDetails(ui) {
                 $('#studentDetailsTable tr:last-child').prev().hide();
             });
             $('#print-btn').prop('disabled', true);
+          
             $reason = '';
             $('input[type="radio"], #other_option').on('change', function() {
-                if ($('#option8').is(':checked')) {
-                    check(false, false, false, false, false, false, false, false, true, $('#other_option').val().trim());
-                    $reason = $('#checkbox8').val() + ': ' + $('#other_option').val().trim();
-                    if($('#other_option').val().trim() != ''){
-                        forPrinting();
-                    }else{
-                        $('#print-btn').prop('disabled', true);
-                    }
-                }else if ($('#option1').is(':checked')){
-                    check(true, true, false, false, false, false, false, false, false, '');
-                    $reason = $('#checkbox1').val();
-                    forPrinting();
-                }else if ($('#option2').is(':checked')){
-                    check(true, false, true, false, false, false, false, false, false, '');
-                    $reason = $('#checkbox2').val();
-                    forPrinting();
-                }else if ($('#option3').is(':checked')){
-                    check(true, false, false, true, false, false, false, false, false, '');
-                    $reason = $('#checkbox3').val();
-                    forPrinting();
-                }else if ($('#option4').is(':checked')){
-                    check(true, false, false, false, true, false, false, false, false, '');
-                    $reason = $('#checkbox4').val();
-                    forPrinting();
-                }else if ($('#option5').is(':checked')){
-                    check(true, false, false, false, false, true, false, false, false, '');
-                    $reason = $('#checkbox5').val();
-                    forPrinting();
-                }else if ($('#option6').is(':checked')){
-                    check(true, false, false, false, false, false, true, false, false, '');
-                    $reason = $('#checkbox6').val();
-                    forPrinting();
-                }else if ($('#option7').is(':checked')){
-                    check(true, false, false, false, false, false, false, true, false, '');
-                    $reason = $('#checkbox7').val();
-                    forPrinting();
-                } 
+                $('input[type="checkbox"]').prop('checked', false);
+                $('#other_option').prop('disabled', false);
+                $('#opt-err').text("");
+                $('#others').val('');
+                forPrinting();
             });
-            
+             
             $('#print-btn').on('click', () => {
-                window.print();
-                addToDB(student.name, student.id, $reason, student.unFormattedDate, student.department);
+                var create_dt = getFormattedDateTime().unFoDate+' '+getFormattedDateTime().unFoTime;
+                var created_by = localStorage.getItem('userEmpID');
+                var user_index = student['res'][0][0].user_index;
+                var reason_index = $('input[type="radio"]:checked').attr('id');
+                $('#others').val($('#other_option').val().trim());
+                var reason_others = $('#others').val();
+                $("#checkbox" + $('input[type="radio"]:checked').attr('id')).prop("checked", true);
+                if($('input[type="radio"]:checked').val() === 'Others'){
+                    if($('#others').val().trim() === ''){
+                        $('#opt-err').text("Input reason for 'Other' option");
+                    }else{
+                        window.print();
+                        addToDB(create_dt, created_by, user_index, reason_index, reason_others);
+                    }
+                }else{
+                    $('#others').val('');
+                    window.print();
+                    addToDB(create_dt, created_by, user_index, reason_index, null);
+                }
             });      
         })
     .catch(error => console.error(error));
@@ -189,7 +191,8 @@ function forPrinting(){
 function fetchStudent(ui) {
     $('style[media="print"]').remove();
     $('#gatePass').empty();
-    $('#studentDetailsTable').empty();			
+    $('#studentDetailsTable').empty();
+    $('#search-load').css('display', 'block');			
     if(ui.length>=2){
         fetch('../server/stud_list_server.php', {
             method: 'POST',
@@ -199,34 +202,33 @@ function fetchStudent(ui) {
         })
         .then(response => response.json())
         .then(studentResult => {
-            console.log(studentResult);
-            
+            $('#search-load').css('display', 'none');		
             if ($('#studentDetails').is(':visible')) {
                 $('#studentDetails').slideUp(500);
                 $('#searchResults').slideDown(1000);
             } else {
                 $('#searchResults').slideDown(1000);
             }
-            if (studentResult.length == 0) {
+            if (studentResult['res'].length == 0) {
                 $('#searchResultsTable').empty();
                 $verified = '<tr><td style="text-align: center; font-weight:bold; background-color: #ff0000;">No Record Found</td></tr>';
                 $('#studentDetailsTable').append($verified);
                 $('#studentDetails').fadeIn(1500);
             }
             
-            else if (studentResult.length == 1){
-                fetchStudentsDetails(studentResult[0].id);
+            else if (studentResult['res'].length == 1){
+                fetchStudentsDetails(studentResult['res'][0].user_index);
             }
             
             else {
                 $('#searchResultsTable').empty();
                 $('#searchErrorMessage').empty();
-                $('#searchResultsTable').append("<tr class='dth'><th width='40%'>Name</th><th width='20%'>ID Number</th><th width='40%'>Strand</th></tr>");
-                studentResult.forEach(function(student) {
-                    $studentResultDisplay = '<tr idn="' + student.id + '"><td>' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.department + '</td></tr>';
+                $('#searchResultsTable').append("<tr class='dth'><th width='70%'>Name</th><th width='20%'>ID Number</th><th width='10%'>Gender</th></tr>");
+                studentResult['res'].forEach(function(student) {
+                    console.log(student);
+                    $studentResultDisplay = '<tr ui="' + student.user_index + '"><td>' + student.lname + ', ' + student.fname + ' ' + student.mname +'</td><td>' + student.id_number + '</td><td>' + student.gender + '</td></tr>';
                     $('#searchResultsTable').append($studentResultDisplay);
                 });
-                console.log(studentResult);
             }
             
         })
@@ -236,15 +238,15 @@ function fetchStudent(ui) {
         $('#searchErrorMessage').empty();
     }			
 }
-function addToDB(name, student_id, reason, date, department) {
+function addToDB(create_dt, created_by, user_index, reason_index, reason_others) {
     fetch('../server/insert_rec_server.php', {
         method: 'POST',
         body: new URLSearchParams({
-            name: name,
-            student_id: student_id,
-            reason: reason,
-            date: date,
-            department: department
+            create_dt: create_dt,
+            created_by: created_by,
+            user_index: user_index,
+            reason_index: reason_index,
+            reason_others: reason_others
         }),
     })
     .then(response => {
@@ -263,154 +265,12 @@ const monthList = document.getElementById("monthList");
 
 
 
-$('#submit-button').on('click', function() {
-    $('#displayTabTable').empty();
-    $startDate = $('#startDate').val();
-    $endDate = $('#endDate').val();
-    $department = $('#deptList').val();
-    if (new Date($startDate) > new Date($endDate)) {
-        $('#displayTab').show(500);
-        $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please check date interval</td></tr>`);
-    }else if ($startDate === '' || $startDate === '') {
-        $('#displayTab').show(500);
-        $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please enter start and end date</td></tr>`);
-    }else{
-        $('#displayTab').show(500);
-        retrieveList($startDate, $endDate, $department);
-    }
-});
-
-$('#print-display').on('click', function() {
-    window.print();
-});
-function formattedDate(date){
-    var dateObj = new Date(date);
-    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var formattedDate = monthNames[dateObj.getMonth()] + " " + dateObj.getDate() + ", " + dateObj.getFullYear();
-    return formattedDate;
-}
-
-function retrieveList(startDate, endDate, department){
-    fetch('../server/display_server.php', {
-        method: 'POST',
-        body: new URLSearchParams({
-            startDate: startDate,
-            endDate: endDate,
-            department: department
-        }),
-    })
-    .then(response => response.json())
-    .then(studentResult => {
-        console.log(department);
-        console.log(formattedDate(startDate));
-        $('#displayTabTable').append(`<thead><tr id="display-head" style="display: none;"> <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;"> <h3>UNIVERSITY OF THE CORDILLERAS</h3> <h5>Governor Pack Rd. Baguio City</h5> <h4>Occupational Safety and Health Office</h4> <h5>List of Student Without ID</h5> <h5>`+department+`</h5> <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5> </th> </tr><tr style="background-color: rgb(198, 255, 190);"> <th> Name <select id="nameSort"name="nameSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> <th> Student ID # </th> <th> Reason </th> <th> Date <select id="dateSort"name="dateSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> </tr></thead>`);
-        if (studentResult.length == 0) {
-            $('#displayTabTable').append('<tbody><tr><td style="text-align:center;"colspan="4">No Record Found</td></tr></tbody>');
-        } else {
-            var $newElement = $('<tbody></tbody>');
-            studentResult.forEach(function(student) {
-                var $listDisplay = '<tr><td style="max-width:200px; overflow: hidden; white-space: nowrap;">' + student.name + '</td><td>' + student.student_id + '</td><td>' + student.reason + '</td><td>' + student.date + '</td></tr>';
-                $newElement.append($listDisplay);          
-            });  
-            $('#displayTabTable').append($newElement);
-            //$('#displayTabTable').append(`<tfoot><tr><td><span class="page-number">Page</span></td></tr></tfoot>`);
-            $('#displayTabTable').append(`<tfoot></tfoot>`);
-        }
-//<tfoot><tr><td></td></tr><td colspan="4">Table footer</td></tfoot>
-        sortName("Ascending");
-        $('#nameSort').click(function() {
-            var sort = $(this).val();
-            sortName(sort);
-        });
-        $('#dateSort').click(function() {
-            var sort = $(this).val();
-            sortDate(sort);
-        });
-    })
-    .catch(error => console.error(error));	
-}
-function sortDate(sort) {
-  var table, tbody, rows, switching, i, x, y, shouldSwitch;
-  table = document.getElementById("displayTabTable");
-  tbody = table.getElementsByTagName("tbody")[0];
-  switching = true;
-  while (switching) {
-    switching = false;
-    rows = tbody.rows;
-    for (i = 0; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
-      x = rows[i].getElementsByTagName("td")[3];
-      y = rows[i + 1].getElementsByTagName("td")[3];
-      if (sort == "Ascending") {
-        if (new Date(x.innerHTML) > new Date(y.innerHTML)) {
-          shouldSwitch = true;
-          break;
-        }
-      } else {
-        if (new Date(x.innerHTML) < new Date(y.innerHTML)) {
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-    }
-  }
-}
-
-
-function sortName(sort) {
-  var table, tbody, rows, switching, i, x, y, shouldSwitch;
-  table = document.getElementById("displayTabTable");
-  tbody = table.getElementsByTagName("tbody")[0];
-  switching = true;
-  while (switching) {
-    switching = false;
-    rows = tbody.rows;
-    for (i = 0; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
-      x = rows[i].getElementsByTagName("td")[0];
-      y = rows[i + 1].getElementsByTagName("td")[0];
-      if (sort == "Ascending") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          shouldSwitch = true;
-          break;
-        }
-      } else {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-    }
-
-  }
-  
-
-}
-
 /*
 function randomData(){
 
-    const reasons = ['Lost', 'Forgot', 'Did not process ID yet', 'ID lost, on process for renewal',
-     'Misplaced', 'Confiscated', 'Deposited'];
+    const reasons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-    const departments = ['College of Information Technology and Computer Science', 'College of Accountancy', 'College of Teacher Education', 
-    'College of Criminal Justice Education', 'College of Arts and Sciences', 'College of Business Administration', 'College of Engineering and Architecture',
-    'College of Hospitality and Tourism Management', 'College of Nursing', 'College of Law',
-    ];
-    const firstNames = ['Alice', 'Benjamin', 'Caroline', 'David', 'Emily', 'Frank', 'Grace', 'Henry', 'Isabel', 'Jacob', 'Katherine', 'Lucas', 'Megan', 'Nathan', 'Olivia', 'Peter', 'Quentin', 'Rachel', 'Samantha', 'Thomas', 'Ursula', 'Victoria', 'William', 'Xander', 'Yvonne', 'Zachary'];
-
-    const lastNames = ['Adams', 'Baker', 'Carter', 'Davis', 'Evans', 'Fisher', 'Gomez', 'Harris', 'Ingram', 'Johnson', 'Khan', 'Lee', 'Mitchell', 'Nguyen', 'Olsen', 'Perez', 'Quinn', 'Robinson', 'Sato', 'Thompson', 'Underwood', 'Valdez', 'Williams', 'Xu', 'Yang', 'Zhang'];
-
-    const lnameIndex = Math.floor(Math.random() * lastNames.length);
-    const lastName = lastNames[lnameIndex];
+    const firstNames = [187786, 77392, 92972, 26604, 126094, 160977, 154345, 126192, 107018, 180131, 188233, 188210];
 
     const fnameIndex = Math.floor(Math.random() * firstNames.length);
     const firstName = firstNames[fnameIndex];
@@ -418,26 +278,32 @@ function randomData(){
     const reasonIndex = Math.floor(Math.random() * reasons.length);
     const reason = reasons[reasonIndex];
 
-    const departmentIndex = Math.floor(Math.random() * departments.length);
-    const department= departments[departmentIndex];
+    var datetimes = generateDateTime();
     
-    let startDate = new Date(2023, 0, 1); // January 1, 2022
-    let endDate = new Date(2023, 11, 31); // December 31, 2022
-    
-    let randomDates = randomDate(startDate, endDate);
-    const formattedDate = randomDates.toISOString().slice(0, 10);
-    console.log(formattedDate);
-    
-    return { date: formattedDate, reason: reason, department: department, lname: lastName, fname: firstName};
+    return { reason: reason, fname: firstName, datetime: datetimes};
 }
+console.log(randomData());
 
-function randomDate(start, end) {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+function generateDateTime() {
+    var startDate = new Date('2023-06-25');
+    var endDate = new Date('2023-06-29');
+  
+    var randomTime = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
+    var randomDate = new Date(randomTime);
+  
+    var year = randomDate.getFullYear();
+    var month = String(randomDate.getMonth() + 1).padStart(2, '0');
+    var day = String(randomDate.getDate()).padStart(2, '0');
+    var hours = String(randomDate.getHours()).padStart(2, '0');
+    var minutes = String(randomDate.getMinutes()).padStart(2, '0');
+    var seconds = String(randomDate.getSeconds()).padStart(2, '0');
+  
+    var datetime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+  
+    return datetime;
   }
-
- 
-
 for(let i = 0; i< 200; i++){
-    addToDB(""+randomData().fname+", "+randomData().lname+"", "18-1690-714", randomData().reason, randomData().date, randomData().department);
+
+    addToDB(randomData().datetime, 301900, randomData().fname, randomData().reason, null);
 }
 */

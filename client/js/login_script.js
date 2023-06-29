@@ -1,18 +1,21 @@
 const token = localStorage.getItem('userToken');
-fetch('../server/token_check.php', {
-    method: 'POST',
-    body: new URLSearchParams({
-        token: token,
-    }),
-})
-.then(response => {
-    if (response.ok) {
-        window.location.href = 'index.html';
-    }
-})
-.catch(error => {
-    console.error('Error:', error);
-});
+console.log(token);
+if(token != null){
+    fetch('../server/token_check.php', {
+        method: 'POST',
+        body: new URLSearchParams({
+            token: token,
+        }),
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = 'index.html';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 const loginForm= document.getElementById('login-form');
 const errorMessage = document.getElementById('error-message');
@@ -37,9 +40,13 @@ function login(username, password){
     })
     .then(data => {
         if(data.length > 0) {
+            console.log(data);
+            
+            localStorage.setItem('userEmpID', data[0].emp_id);
             localStorage.setItem('userToken', data[0].token);
             localStorage.setItem('userName', data[0].name);
             localStorage.setItem('userPos', data[0].position);
+            
             window.location.href = 'index.html';
         } else {
             errorMessage.textContent = data.error;

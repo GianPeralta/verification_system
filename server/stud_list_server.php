@@ -4,35 +4,26 @@
     if (isset($_POST['str'])) {
         $ss = validateInput($_POST['str']);
     
-        if (empty($ss)) {
-            echo json_encode(['error' => 'Please provide a search string.']);
-            exit;
+        $res = array();
+        $error = null;
+        try {
+            $qrystuds = "SELECT *
+            FROM user_table ut
+            WHERE ut.id_number LIKE '%$ss%' OR ut.fname LIKE '%$ss%' OR ut.lname LIKE '%$ss%';";
+
+            $resstuds = mysqli_query($conn, $qrystuds);
+            while($rowstuds=mysqli_fetch_assoc($resstuds)){
+				array_push($res,$rowstuds);
+			}
+        } catch (Exception $e) {
+            $error = $e->getMessage();
         }
-    
-        $ss = mysqli_real_escape_string($conn, $ss);
-    
-        $qry = "SELECT id, name, student_id, department FROM student WHERE name LIKE ? OR student_id LIKE ?";
-        $stmt = mysqli_prepare($conn, $qry);
+        $response = array(
+            'error' => $error,
+            'res' => $res
+        );
 
-        $searchString = "%$ss%";
-        mysqli_stmt_bind_param($stmt, "ss", $searchString, $searchString);
-
-        $res = mysqli_stmt_execute($stmt);
-
-        if (!$res) {
-            echo json_encode(['error' => 'An error occurred while searching the database.']);
-            exit;
-        }
-
-        $result = mysqli_stmt_get_result($stmt);
-
-        $studs_ar = array();
-
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            array_push($studs_ar, $row);
-        }
-
-        echo json_encode($studs_ar);
+        echo json_encode($response);
     } else {
         echo json_encode(['error' => 'Invalid request.']);
     }
