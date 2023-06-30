@@ -105,24 +105,34 @@ function fetchStudentsDetails(ui) {
     .then(response => response.json())
         .then(student => {
             console.log(student);
+            $('#search-load').css('display', 'none');
             $verified = '<tr><td colspan="3" style="text-align: center; font-weight:bold; background-color: ' + (student.lastEnrollment == '2nd Trimester S.Y. 2022-2023' ? '#00b050;">Student Currently Enrolled' : '#ff0000;">Student Currently not Enrolled') + '</td></tr><tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>' + student.lastEnrollment + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br>';
             $confirmed = '<tr style="position:relative"> <td colspan="2"> <img src="./img/logo.png" alt="" width="90px" style="padding-left:5px"> <span style="position:absolute;bottom:5px;right:2px;font-size:8px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span> </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr> <td>Date: ' + getFormattedDateTime().date + '</td><td>Entry Time: ' + getFormattedDateTime().time + '</td></tr><tr> <td colspan="2">Name: '+ student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname +' </td></tr><tr> <td colspan="2">Course & Year Level: ' + student['res'][0][0].course_code + ' ' + student['res'][0][0].year_level + ' </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr> <td style="width:50%">';
             
             var reasonsLeft = '';
             var reasonsRight = '';
             var reasons = student['res'][1];
-            console.log(reasons);
             var halfLength = Math.ceil(reasons.length / 2);
-
+            /*
+            var latest = student['res'][2]['create_dt'];
+            var latestdateOnly = latest.split(" ")[0];
+            
+            
+            if(getFormattedDateTime().unFoDate == latestdateOnly){
+                console.log('already issued');
+            }else{
+                console.log('not already issued');
+            }
+            */
             for (var i = 0; i < reasons.length; i++) {
                 var reason = reasons[i];
                 if(reason['r_index'] !== '999'){
                     var reasonHtml = '<input type="checkbox" id="checkbox' + reason['r_index'] + '" name="checkbox' + reason['r_index'] + '" value="' + reason['description'] + '"> <label for="checkbox' + reason['r_index'] + '">' + reason['description'] + '</label> <br>';
                 
                     if (i < halfLength) {
-                    reasonsLeft += reasonHtml;
+                        reasonsLeft += reasonHtml;
                     } else {
-                    reasonsRight += reasonHtml;
+                        reasonsRight += reasonHtml;
                     }
 
                     $reason2 = '<input type="radio" name="option" value="'+ reason['description'] +'" id="' + reason['r_index'] + '"><label for="' + reason['r_index'] + '">'+ reason['description'] +'</label><br>';
@@ -202,7 +212,7 @@ function fetchStudent(ui) {
         })
         .then(response => response.json())
         .then(studentResult => {
-            $('#search-load').css('display', 'none');		
+            		
             if ($('#studentDetails').is(':visible')) {
                 $('#studentDetails').slideUp(500);
                 $('#searchResults').slideDown(1000);
@@ -214,6 +224,7 @@ function fetchStudent(ui) {
                 $verified = '<tr><td style="text-align: center; font-weight:bold; background-color: #ff0000;">No Record Found</td></tr>';
                 $('#studentDetailsTable').append($verified);
                 $('#studentDetails').fadeIn(1500);
+                $('#search-load').css('display', 'none');
             }
             
             else if (studentResult['res'].length == 1){
@@ -221,6 +232,7 @@ function fetchStudent(ui) {
             }
             
             else {
+                $('#search-load').css('display', 'none');
                 $('#searchResultsTable').empty();
                 $('#searchErrorMessage').empty();
                 $('#searchResultsTable').append("<tr class='dth'><th width='70%'>Name</th><th width='20%'>ID Number</th><th width='10%'>Gender</th></tr>");
@@ -264,13 +276,13 @@ function addToDB(create_dt, created_by, user_index, reason_index, reason_others)
 const monthList = document.getElementById("monthList");
 
 
-
 /*
+
 function randomData(){
 
     const reasons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-    const firstNames = [187786, 77392, 92972, 26604, 126094, 160977, 154345, 126192, 107018, 180131, 188233, 188210];
+    const firstNames = [131522, 128406, 126185, 127944, 131231, 188123, 128406];
 
     const fnameIndex = Math.floor(Math.random() * firstNames.length);
     const firstName = firstNames[fnameIndex];

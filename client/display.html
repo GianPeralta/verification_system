@@ -16,6 +16,9 @@
         #displayTabTable{
             margin-top: 500px;
         }
+        tr {
+            background-color: transparent !important;
+        }
       }
       #displayTabTable{
         font-size: 14px;
@@ -57,26 +60,19 @@
                     <button class="display-buttons" id="submit-button" style="width: 100%; height: 50px;">Submit</button>
                 </td>
             </tr>
-            
             <tr>
                 <td colspan="4" style="text-align: center;">
-                    <button class="display-buttons mx-auto" id="print-display" style="width: 50%; float: none;">Print Page</button>
+                    <button class="display-buttons mx-auto" id="print-display" style="width: 50%; float: none; background-color: #b0deff;" disabled>Print Page</button>
+                    <p id="dis-load" style="display:none;">Loading...</p>
                 </td>
+                
             </tr>
-
-            
-            
         </table>
-       
+        
     </div>	
-
     <div style="width: 100%;" hidden id="displayTab">
-        <table style="width: 90%; margin: 0 auto;" id="displayTabTable">
-
-        </table>
-
+        <table style="width: 90%; margin: 0 auto;" id="displayTabTable"></table>
     </div>
-
     <footer>
 		<p>&copy; 2023 University of the Cordilleras. All Rights Reserved.</p>
 	</footer>
@@ -89,7 +85,7 @@
             console.log(rows);
             counter=1;
             for (var i = 0; i < rows.length; i++) {
-                if ((i + 1) % 22 === 0) {
+                if ((i + 1) % 20 === 0) {
                     var newRow = document.createElement('tr');
                     newRow.setAttribute('style', 'font-size: 10px; font-weight: bold; border: none;');
                     newRow.innerHTML = '<td colspan="4" class="page-numbers" style="text-align:right; border:none;">Page '+counter+'</td>';
@@ -103,6 +99,9 @@
                     counter++;
                 }
             } 
+            $('.page-numbers').text(function(index, oldText) {
+                return oldText + ' of ' +(counter-1);
+            });
         });
         window.addEventListener('afterprint', function() {
             var tahead = document.getElementById('display-head');
@@ -127,6 +126,7 @@
                     $('#deptList').append('<option value="'+college['c_index']+'" c-name="'+college['c_name']+'">'+college['c_name']+'</option>');
                 }
                 $('#submit-button').on('click', function() {
+                    $('#dis-load').css('display', 'block');
                     $('#displayTabTable').empty();
                     $startDate = $('#startDate').val();
                     $endDate = $('#endDate').val();
@@ -136,15 +136,17 @@
                     if (new Date($startDate) > new Date($endDate)) {
                         $('#displayTab').show(500);
                         $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please check date interval</td></tr>`);
+                        $('#dis-load').css('display', 'none');
                     }else if ($startDate === '' || $endDate === '') {
                         $('#displayTab').show(500);
                         $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please enter start and end date</td></tr>`);
+                        $('#dis-load').css('display', 'none');
                     }else{
                         $('#displayTab').show(500);
                         retrieveList($startDate, $endDate, $department, $cname);
                     }
                 });
-
+                
                 $('#print-display').on('click', function() {
                     window.print();
                     window.location.reload();
@@ -169,19 +171,20 @@
                     .then(studentResult => {
                         console.log(studentResult['res']);
                         $('#displayTabTable').append(`<thead><tr id="display-head" style="display: none;"> <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;"> <h3>UNIVERSITY OF THE CORDILLERAS</h3> <h5>Governor Pack Rd. Baguio City</h5> <h4>Occupational Safety and Health Office</h4> <h5>List of Student Without ID</h5> <h5>`+$cname+`</h5> <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5> </th> </tr><tr style="background-color: rgb(198, 255, 190);"> <th> Name <select id="nameSort"name="nameSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> <th> Student ID # </th> <th> Reason </th> <th> Date <select id="dateSort"name="dateSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> </tr></thead>`);
+                        $('#dis-load').css('display', 'none');
+                        $("#print-display").prop("disabled", false);
+                        $('#print-display').css('background-color', '#0077cc');
                         if (studentResult['res'].length == 0) {
                             $('#displayTabTable').append('<tbody><tr><td style="text-align:center;"colspan="4">No Record Found</td></tr></tbody>');
                         } else {
                             var $newElement = $('<tbody></tbody>');
                             studentResult['res'].forEach(function(student) {
-                                var $listDisplay = '<tr><td>' + student.full_name + '</td><td>' + student.id_number + '</td><td>' + student.reason + '</td><td>' + student.create_dt + '</td></tr>';
+                                var $listDisplay = '<tr><td style="min-height:35px; max-height:35px; height:35px;">' + student.lname + ', ' + student.fname + ' ' + student.mname +'</td><td>' + student.id_number + '</td><td>' + student.reason + '</td><td>' + student.create_dt + '</td></tr>';
                                 $newElement.append($listDisplay);          
                             });  
                             $('#displayTabTable').append($newElement);
-                            //$('#displayTabTable').append(`<tfoot><tr><td><span class="page-number">Page</span></td></tr></tfoot>`);
                             $('#displayTabTable').append(`<tfoot></tfoot>`);
                         }
-                //<tfoot><tr><td></td></tr><td colspan="4">Table footer</td></tfoot>
                         sortName("Ascending");
                         $('#nameSort').click(function() {
                             var sort = $(this).val();
@@ -203,28 +206,27 @@
                         switching = false;
                         rows = tbody.rows;
                         for (i = 0; i < (rows.length - 1); i++) {
-                        shouldSwitch = false;
-                        x = rows[i].getElementsByTagName("td")[3];
-                        y = rows[i + 1].getElementsByTagName("td")[3];
-                        if (sort == "Ascending") {
-                            if (new Date(x.innerHTML) > new Date(y.innerHTML)) {
-                            shouldSwitch = true;
-                            break;
+                            shouldSwitch = false;
+                            x = rows[i].getElementsByTagName("td")[3];
+                            y = rows[i + 1].getElementsByTagName("td")[3];
+                            if (sort == "Ascending") {
+                                if (new Date(x.innerHTML) > new Date(y.innerHTML)) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            } else {
+                                if (new Date(x.innerHTML) < new Date(y.innerHTML)) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
                             }
-                        } else {
-                            if (new Date(x.innerHTML) < new Date(y.innerHTML)) {
-                            shouldSwitch = true;
-                            break;
-                            }
-                        }
                         }
                         if (shouldSwitch) {
-                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                        switching = true;
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
                         }
                     }
                 }
-
 
                 function sortName(sort) {
                     var table, tbody, rows, switching, i, x, y, shouldSwitch;
@@ -235,29 +237,26 @@
                         switching = false;
                         rows = tbody.rows;
                         for (i = 0; i < (rows.length - 1); i++) {
-                        shouldSwitch = false;
-                        x = rows[i].getElementsByTagName("td")[0];
-                        y = rows[i + 1].getElementsByTagName("td")[0];
-                        if (sort == "Ascending") {
-                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
+                            shouldSwitch = false;
+                            x = rows[i].getElementsByTagName("td")[0];
+                            y = rows[i + 1].getElementsByTagName("td")[0];
+                            if (sort == "Ascending") {
+                                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
+                            } else {
+                                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                    shouldSwitch = true;
+                                    break;
+                                }
                             }
-                        } else {
-                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                            }
-                        }
                         }
                         if (shouldSwitch) {
-                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                        switching = true;
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
                         }
-
                     }
-                
-
                 }
             })
         .catch(error => console.error(error));

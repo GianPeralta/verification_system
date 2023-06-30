@@ -8,7 +8,7 @@
         $error = null;
         try {
             $stud_stats = array();
-            $qrystuds = "SELECT ut.user_index, ut.id_number, ut.fname, ut.mname, ut.lname, ut.gender, sch.cur_hist_index, sch.course_index schci, sch.semester, sch.year_level, gd.grad_data_index, gd.grad_year, co.course_index, co.tution_type, co.course_code, co.course_name, c.c_index, c.c_code, c.c_name
+            $qrystuds = "SELECT ut.user_index, ut.id_number, ut.fname, ut.mname, ut.lname, ut.gender, sch.cur_hist_index, sch.course_index schci, sch.semester, sch.year_level, gd.grad_data_index, COALESCE(gd.grad_year, 'Not graduated') AS grad_year, co.course_index, co.tution_type, co.course_code, co.course_name, c.c_index, c.c_code, c.c_name
             FROM user_table ut
             LEFT JOIN stud_curriculum_hist sch ON sch.user_index = ut.user_index
             LEFT JOIN graduation_data gd ON gd.stud_index = ut.user_index
@@ -55,6 +55,14 @@
 				array_push($reasons,$rowreasons);
 			}
             array_push($res,$reasons);
+
+            $qrylatest = "SELECT * FROM gp_record WHERE user_index = '$ss' ORDER BY create_dt DESC LIMIT 1";
+
+            $reslatest = mysqli_query($conn, $qrylatest);
+            while($rowlatest=mysqli_fetch_assoc($reslatest)){
+				array_push($res,$rowlatest);
+			}
+   
         } catch (Exception $e) {
             $error = $e->getMessage();
         }

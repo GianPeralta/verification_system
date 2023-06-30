@@ -17,7 +17,6 @@ if (isset($_POST['startDate']) && isset($_POST['endDate']) && isset($_POST['depa
             } else {
                 $res = secondarySchool($conn, $startDate, $endDate, 18, 53, 'SENIOR HIGH SCHOOL', 41, 'SHS', $res);
             }
-
         } else if($department === 'All Departments'){
             $qryrecords = queryBody($startDate, $endDate);
 
@@ -83,7 +82,14 @@ function secondarySchool($conn, $startDate, $endDate, $year_from, $year_to, $c_n
 }
 
 function queryBody($startDate, $endDate){
-    return "SELECT ut.user_index, ut.id_number, CONCAT(ut.lname, ', ', ut.fname, ' ', ut.mname) AS full_name, CONCAT_WS(' ', grs.description, gr.reason_others) AS reason, c.c_name, sch.course_index schci, sch.year_level, c.c_index, gr.create_dt
+    return "SELECT ut.user_index, ut.id_number, COALESCE(ut.lname, '-') as lname, COALESCE(ut.fname, '-') as fname, COALESCE(ut.mname, '-') as mname, CONCAT_WS(
+        IFNULL(
+          ':',
+          ''
+        ),
+        grs.description,
+        gr.reason_others
+      ) AS reason, c.c_name, sch.course_index schci, sch.year_level, c.c_index, gr.create_dt
     FROM gp_record gr
     JOIN gp_reasons grs ON grs.r_index = gr.reason_index
     LEFT JOIN user_table ut ON ut.user_index = gr.user_index
