@@ -170,7 +170,7 @@
                     .then(response => response.json())
                     .then(studentResult => {
                         console.log(studentResult['res']);
-                        $('#displayTabTable').append(`<thead><tr id="display-head" style="display: none;"> <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;"> <h3>UNIVERSITY OF THE CORDILLERAS</h3> <h5>Governor Pack Rd. Baguio City</h5> <h4>Occupational Safety and Health Office</h4> <h5>List of Student Without ID</h5> <h5>`+$cname+`</h5> <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5> </th> </tr><tr style="background-color: rgb(198, 255, 190);"> <th> Name <select id="nameSort"name="nameSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> <th> Student ID # </th> <th> Reason </th> <th> Date <select id="dateSort"name="dateSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> </tr></thead>`);
+                        $('#displayTabTable').append(`<thead><tr id="display-head" style="display: none;"> <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;"> <h3>UNIVERSITY OF THE CORDILLERAS</h3> <h5>Governor Pack Rd. Baguio City</h5> <h4>Occupational Safety and Health Office</h4> <h5>List of Student Without ID</h5> <h5>`+$cname+`</h5> <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5> </th> </tr><tr style="background-color: rgb(198, 255, 190);"> <th> Name <select id="nameSort"name="nameSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> <th style="width: 70px; text-align: center;"> Student ID </th> <th> Reason </th> <th style="width: 80px; text-align: center;"> Date <select id="dateSort"name="dateSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> </tr></thead>`);
                         $('#dis-load').css('display', 'none');
                         $("#print-display").prop("disabled", false);
                         $('#print-display').css('background-color', '#0077cc');
@@ -179,7 +179,7 @@
                         } else {
                             var $newElement = $('<tbody></tbody>');
                             studentResult['res'].forEach(function(student) {
-                                var $listDisplay = '<tr><td style="min-height:35px; max-height:35px; height:35px;">' + student.lname + ', ' + student.fname + ' ' + student.mname +'</td><td>' + student.id_number + '</td><td>' + student.reason + '</td><td>' + student.create_dt + '</td></tr>';
+                                var $listDisplay = '<tr><td style="min-height:35px; max-height:35px; height:35px;">' + student.lname + ', ' + student.fname + ' ' + student.mname +'</td><td style="width: 70px; text-align: center;">' + student.id_number + '</td><td>' + student.reason + '</td><td style="width: 80px; text-align: center;">' + student.create_dt + '</td></tr>';
                                 $newElement.append($listDisplay);          
                             });  
                             $('#displayTabTable').append($newElement);

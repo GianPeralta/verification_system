@@ -3,6 +3,37 @@
 <HEAD>
 	<script language="javascript" type="text/javascript" src="./js/jquery-3.6.4.js"></script>
 	<link rel="stylesheet" href="./css/style.css">
+	<style>
+		* {
+		  box-sizing: border-box;
+		}
+		
+		.row {
+		  margin-left:-5px;
+		  margin-right:-5px;
+		}
+		  
+		.column {
+		  float: left;
+		  width: 50%;
+		  padding: 5px;
+		}
+		
+		/* Clearfix (clear floats) */
+		.row::after {
+		  content: "";
+		  clear: both;
+		  display: table;
+		}
+		
+		#studentDetailsTable, #studentRecordsTable{
+		  border-collapse: collapse;
+		  border-spacing: 0;
+		  width: 90%;
+		  border: 1px solid #ddd;
+		}
+		
+		</style>
 </head>
 <body>
 	<header>
@@ -30,9 +61,18 @@
 			</table>
 		</div>
 		<br>
+
 		<div hidden id='studentDetails'>
-			<table width='55%' id='studentDetailsTable'>		
-			</table>
+			<div class="row">
+				<div class="column">
+					<table width='50%' id='studentDetailsTable'>		
+					</table>
+				</div>
+				<div class="column">
+					<table width='50%' id='studentRecordsTable'>	
+					</table>
+				</div>
+			</div>
 		</div>
 		<div id='gatePassTab'>
 			<table width='100%' id='gatePass'>

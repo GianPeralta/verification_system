@@ -84,7 +84,7 @@ function secondarySchool($conn, $startDate, $endDate, $year_from, $year_to, $c_n
 function queryBody($startDate, $endDate){
     return "SELECT ut.user_index, ut.id_number, COALESCE(ut.lname, '-') as lname, COALESCE(ut.fname, '-') as fname, COALESCE(ut.mname, '-') as mname, CONCAT_WS(
         IFNULL(
-          ':',
+          ': ',
           ''
         ),
         grs.description,

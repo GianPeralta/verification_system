@@ -28,6 +28,7 @@ $('#userTab').append('<h2 style="padding-left:15px;">'+ localStorage.getItem('us
 $('#logout').on('click', function() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userEmpID');
     localStorage.removeItem('userPos');
     window.location.href = 'login.html';
 });
@@ -64,19 +65,6 @@ $('#searchResults').on('click','tr:not(:first)', function(){
     }		
 });	
 
-function check(inp, chk1, chk2, chk3, chk4, chk5, chk6, chk7, chk8, val){
-    $('#other_option').prop('disabled', inp);
-    $("#checkbox1").prop("checked", chk1);
-    $("#checkbox2").prop("checked", chk2);
-    $("#checkbox3").prop("checked", chk3);
-    $("#checkbox4").prop("checked", chk4);
-    $("#checkbox5").prop("checked", chk5);
-    $("#checkbox6").prop("checked", chk6);
-    $("#checkbox7").prop("checked", chk7);
-    $("#checkbox8").prop("checked", chk8);
-    $('#others').val(val);
-}
-
 function getFormattedDateTime() {
     const date = new Date();
   
@@ -106,24 +94,14 @@ function fetchStudentsDetails(ui) {
         .then(student => {
             console.log(student);
             $('#search-load').css('display', 'none');
-            $verified = '<tr><td colspan="3" style="text-align: center; font-weight:bold; background-color: ' + (student.lastEnrollment == '2nd Trimester S.Y. 2022-2023' ? '#00b050;">Student Currently Enrolled' : '#ff0000;">Student Currently not Enrolled') + '</td></tr><tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>' + student.lastEnrollment + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br>';
+            $verified = '<tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>'+ toOrdinalNumber(student['res'][0][0].semester) + ' Trimester ' + student['res'][0][0].sy_from + '-' + student['res'][0][0].sy_to + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br>';
             $confirmed = '<tr style="position:relative"> <td colspan="2"> <img src="./img/logo.png" alt="" width="90px" style="padding-left:5px"> <span style="position:absolute;bottom:5px;right:2px;font-size:8px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span> </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr> <td>Date: ' + getFormattedDateTime().date + '</td><td>Entry Time: ' + getFormattedDateTime().time + '</td></tr><tr> <td colspan="2">Name: '+ student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname +' </td></tr><tr> <td colspan="2">Course & Year Level: ' + student['res'][0][0].course_code + ' ' + student['res'][0][0].year_level + ' </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr> <td style="width:50%">';
             
             var reasonsLeft = '';
             var reasonsRight = '';
             var reasons = student['res'][1];
             var halfLength = Math.ceil(reasons.length / 2);
-            /*
-            var latest = student['res'][2]['create_dt'];
-            var latestdateOnly = latest.split(" ")[0];
-            
-            
-            if(getFormattedDateTime().unFoDate == latestdateOnly){
-                console.log('already issued');
-            }else{
-                console.log('not already issued');
-            }
-            */
+
             for (var i = 0; i < reasons.length; i++) {
                 var reason = reasons[i];
                 if(reason['r_index'] !== '999'){
@@ -139,8 +117,21 @@ function fetchStudentsDetails(ui) {
                     $verified += $reason2;
                 }
             }
-            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr>';
+            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
             $('#studentDetailsTable').append($verified);
+
+            $recordhist='<tr><th colspan="3"><h4>Past Issuances</h4></th></tr><tr><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
+            var records = student['res'][2];
+            if(records.length !== 0){
+                for (var i = 0; i < records.length; i++) {
+                    var record = records[i];
+                    $recordhist +='<tr><td>'+ record['reason'] +'</td><td>'+ record['create_dt'] +'</td><td>'+ record['name'] +'</td></tr>'; 
+                }
+            }else{
+                $recordhist +='<tr><td colspan="3" style="text-align: center;">No previous issuances</td></tr>'; 
+            }
+            $('#studentRecordsTable').append($recordhist);
+            
             $('#studentDetails').fadeIn(1500);
             
             $confirmed += reasonsLeft + '</td><td style="padding-right:20px;width:50%">' + reasonsRight + '<input type="checkbox" id="checkbox999" name="checkbox999" value="Others"> <label for="checkbox999">Others:</label> <br><input type="text" id="others" style="border:none;font-size:9px;border-bottom:1px solid #000;width:100%;background-color:transparent"> </td></tr><tr> <td colspan="2" style="font-style:italic;font-weight:700;text-align:center;">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr> <td colspan="2"> <div style="width:70%;margin:0 auto;text-align:center;padding-top:15px;"> <hr> <span style="font-weight:700">Student Signature</span> </div></td></tr><tr> <td colspan="2"> <div style="margin:0 auto;text-align:center; padding-top: 15px;padding-bottom: 4px;"> <span style="text-decoration-line:underline; font-size:10px;">' + localStorage.getItem('userPos') + ' ' + localStorage.getItem('userName') + ' / ' + getFormattedDateTime().date + '</span> <br><span style="font-weight:700;font-size:8px;">Issuing Officer</span> <br><span style="font-size:8px;">(Name | Signature | Date)</span> </div></td></tr><tr> <td colspan="2" style="padding:0 0 0 3px;">UC-OSH-FORM-03 <br>May 26, 2022 Rev.01 </td></tr>';
@@ -149,10 +140,10 @@ function fetchStudentsDetails(ui) {
             $('#searchResults').hide();
           
             $('#other_option').prop('disabled', true);
-            $('#studentDetailsTable tr:last-child').hide();
+            $('#studentDetailsTable tr:last-child, #studentDetailsTable tr:nth-last-child(2)').hide();
             $('#confirm').on('click', function() {
-                $('#studentDetailsTable tr:last-child').show(1000);
-                $('#studentDetailsTable tr:last-child').prev().hide();
+                $('#studentDetailsTable tr:last-child, #studentDetailsTable tr:nth-last-child(2)').show(1000);
+                $('#studentDetailsTable tr:nth-last-child(3)').hide();
             });
             $('#print-btn').prop('disabled', true);
           
@@ -202,6 +193,7 @@ function fetchStudent(ui) {
     $('style[media="print"]').remove();
     $('#gatePass').empty();
     $('#studentDetailsTable').empty();
+    $('#studentRecordsTable').empty();
     $('#search-load').css('display', 'block');			
     if(ui.length>=2){
         fetch('../server/stud_list_server.php', {
@@ -266,6 +258,7 @@ function addToDB(create_dt, created_by, user_index, reason_index, reason_others)
             $('style[media="print"]').remove();
             $('#gatePass').empty();
             $('#studentDetailsTable').empty();	
+            $('#studentRecordsTable').empty();
             $('#searchInput').val('');
         } else {
             console.log("Fetch unsuccessful");
@@ -275,6 +268,33 @@ function addToDB(create_dt, created_by, user_index, reason_index, reason_others)
 }
 const monthList = document.getElementById("monthList");
 
+function toOrdinalNumber(numberString) {
+    var number = parseInt(numberString);
+    var suffix = "";
+  
+    if (isNaN(number)) {
+      return "Invalid number";
+    }
+  
+    var lastDigit = number % 10;
+    var secondLastDigit = Math.floor((number / 10) % 10);
+  
+    if (secondLastDigit === 1) {
+      suffix = "th";
+    } else {
+      if (lastDigit === 1) {
+        suffix = "st";
+      } else if (lastDigit === 2) {
+        suffix = "nd";
+      } else if (lastDigit === 3) {
+        suffix = "rd";
+      } else {
+        suffix = "th";
+      }
+    }
+  
+    return numberString + suffix;
+  }
 
 /*
 
