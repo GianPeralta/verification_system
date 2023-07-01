@@ -32,7 +32,30 @@
 		  width: 90%;
 		  border: 1px solid #ddd;
 		}
-		
+		#studentDetailsTable tr th,
+		#studentDetailsTable tr td {
+			text-align: left;
+			padding: 16px;
+		}
+
+		#studentRecordsTable tr th{
+			padding: 10px;
+		}
+
+		#studentRecordsTable tr td{
+			padding: 8px;
+		}
+
+		#studentDetailsTable tr:nth-child(even) {
+			background-color: #e4fbe3;
+		}
+		#searchResultsTable tr th, #searchResultsTable tr td{
+			padding: 10px;
+		}
+
+		#searchResultsTable tr td, #studentDetailsTable tr td, #studentRecordsTable tr td, #searchResultsTable tr th, #studentDetailsTable tr th, #studentRecordsTable tr th{
+			border-color: #009688 !important;
+		}
 		</style>
 </head>
 <body>
@@ -50,7 +73,7 @@
 			<button id="display_records" style="margin: 15px; width: 25%;">Display Records</button>
 		</div>	
 		<div id="searchInputTab">
-			<h3>Student/Employee Verification</h3>
+			<h3>Student Verification</h3>
 			<input type="text" name="searchInput" class='bg-sayotz green-input' style='text-align: center' id="searchInput" placeholder="Enter ID Number or Name">	
 			<button id="verifyBtn">Verify</button>
 			<h2 id="search-load" style="text-align: center; display:none;">Loading</h2>

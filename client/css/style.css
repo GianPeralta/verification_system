@@ -43,23 +43,20 @@ footer p {
 }
 
 #searchResultsTable tr:not(:first-child):hover{
-    background: linear-gradient(to right, #A5E0A2, white) !important;
+    background-color: #A5E0A2 !important;
     box-shadow: 3px 3px 3px gray !important;
+    cursor: pointer;
 }
 #searchResultsTable tr:not(:first-child){
     padding: 3px !important;
 }
 
-td{
-    border: 1px solid black;
-}
 .dth{
-    background-color: #0F402E !important;
+    background-color: #009688 !important;
     color: white;	
-    padding: 5px;
+    padding: 10px;
     border-radius: 3px 3px 3px 3px;
     border: none;
-    box-shadow: 3px 3px 3px gray;
     font-weight: bold;
 }
 
@@ -287,3 +284,18 @@ h4{
     margin-bottom: 20px;
 }
 
+#other_option{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    border: 1px solid #009688;
+    font-family: inherit;
+    padding: 16px 12px 0 12px;
+    height: 56px;
+    font-size: 16px;
+    font-weight: 400;
+    background: rgba(#000,.02);
+    box-shadow: inset 0 -1px 0 rgba(#000,.3);
+    color: #000;
+    transition: all .15s ease;
+}

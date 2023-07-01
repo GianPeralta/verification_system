@@ -117,10 +117,10 @@ function fetchStudentsDetails(ui) {
                     $verified += $reason2;
                 }
             }
-            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:65%;float:right" placeholder="Enter other option"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
+            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:100%;float:right" placeholder="Input other reason"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
             $('#studentDetailsTable').append($verified);
 
-            $recordhist='<tr><th colspan="3"><h4>Past Issuances</h4></th></tr><tr><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
+            $recordhist='<tr><th colspan="3"><h3>Past Temporary Gate Pass Issuances</h3></th></tr><tr style="background-color: #e4fbe3;"><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
             var records = student['res'][2];
             if(records.length !== 0){
                 for (var i = 0; i < records.length; i++) {
@@ -150,7 +150,13 @@ function fetchStudentsDetails(ui) {
             $reason = '';
             $('input[type="radio"], #other_option').on('change', function() {
                 $('input[type="checkbox"]').prop('checked', false);
-                $('#other_option').prop('disabled', false);
+                if($('input[type="radio"]:checked').attr('id') == "999"){
+                    $('#other_option').prop('disabled', false);
+                }else{
+                    $('#other_option').prop('disabled', true);
+                    $('#other_option').val('');
+                }
+                
                 $('#opt-err').text("");
                 $('#others').val('');
                 forPrinting();
