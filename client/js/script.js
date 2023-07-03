@@ -117,7 +117,7 @@ function fetchStudentsDetails(ui) {
                     $verified += $reason2;
                 }
             }
-            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:100%;float:right" placeholder="Input other reason"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
+            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:100%;float:right" placeholder="Input other reason" maxlength="28"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
             $('#studentDetailsTable').append($verified);
 
             $recordhist='<tr><th colspan="3"><h3>Past Temporary Gate Pass Issuances</h3></th></tr><tr style="background-color: #e4fbe3;"><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
@@ -223,13 +223,9 @@ function fetchStudent(ui) {
                 $('#studentDetailsTable').append($verified);
                 $('#studentDetails').fadeIn(1500);
                 $('#search-load').css('display', 'none');
-            }
-            
-            else if (studentResult['res'].length == 1){
+            }else if (studentResult['res'].length == 1){
                 fetchStudentsDetails(studentResult['res'][0].user_index);
-            }
-            
-            else {
+            }else {
                 $('#search-load').css('display', 'none');
                 $('#searchResultsTable').empty();
                 $('#searchErrorMessage').empty();
@@ -240,7 +236,6 @@ function fetchStudent(ui) {
                     $('#searchResultsTable').append($studentResultDisplay);
                 });
             }
-            
         })
         .catch(error => console.error(error));
     }else{

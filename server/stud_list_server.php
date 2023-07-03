@@ -9,7 +9,14 @@
         try {
             $qrystuds = "SELECT *
             FROM user_table ut
-            WHERE ut.id_number LIKE '%$ss%' OR ut.fname LIKE '%$ss%' OR ut.lname LIKE '%$ss%';";
+            WHERE LOWER(CONCAT(ut.fname%, ' ', ut.lname)) LIKE LOWER('$ss%') OR
+                  LOWER(CONCAT(ut.lname, ' ', ut.fname)) LIKE LOWER('$ss%') OR
+                  LOWER(CONCAT(ut.lname, ', ', ut.fname,' ',ut.mname)) LIKE LOWER('$ss%') OR
+                  LOWER(CONCAT(ut.fname, ' ', ut.mname,' ',ut.lname)) LIKE LOWER('$ss%') OR
+                  LOWER(ut.fname) LIKE LOWER('$ss%') OR
+                  LOWER(ut.lname) LIKE LOWER('$ss%') OR
+                  LOWER(ut.mname) LIKE LOWER('%$ss%') OR
+                  ut.id_number LIKE '$ss%'";
 
             $resstuds = mysqli_query($conn, $qrystuds);
             while($rowstuds=mysqli_fetch_assoc($resstuds)){
