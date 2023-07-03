@@ -82,7 +82,6 @@
             var tahead = document.getElementById('display-head');
             tahead.style.display="table-row";
             var rows = document.querySelectorAll('#displayTabTable tbody tr');
-            console.log(rows);
             counter=1;
             for (var i = 0; i < rows.length; i++) {
                 if ((i + 1) % 20 === 0) {
@@ -119,10 +118,8 @@
         })
         .then(response => response.json())
             .then(colleges => {
-                console.log(colleges['res'].length);
                 for (var i = 0; i < colleges['res'].length; i++) {
                     var college = colleges['res'][i];
-                    console.log(college);
                     $('#deptList').append('<option value="'+college['c_index']+'" c-name="'+college['c_name']+'">'+college['c_name']+'</option>');
                 }
                 $('#submit-button').on('click', function() {
@@ -132,7 +129,6 @@
                     $endDate = $('#endDate').val();
                     $department = $('#deptList').val();
                     $cname = $('#deptList').find(":selected").attr("c-name");
-                    console.log($cname);
                     if (new Date($startDate) > new Date($endDate)) {
                         $('#displayTab').show(500);
                         $('#displayTabTable').append(`<tr><td style="text-align: center; color: red;">Please check date interval</td></tr>`);
@@ -169,7 +165,6 @@
                     })
                     .then(response => response.json())
                     .then(studentResult => {
-                        console.log(studentResult['res']);
                         $('#displayTabTable').append(`<thead><tr id="display-head" style="display: none;"> <th colspan="4" style="text-align: center; border: none; padding-bottom: 25px;"> <h3>UNIVERSITY OF THE CORDILLERAS</h3> <h5>Governor Pack Rd. Baguio City</h5> <h4>Occupational Safety and Health Office</h4> <h5>List of Student Without ID</h5> <h5>`+$cname+`</h5> <h5>`+formattedDate(startDate)+` - `+formattedDate(endDate)+`</h5> </th> </tr><tr style="background-color: rgb(198, 255, 190);"> <th> Name <select id="nameSort"name="nameSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> <th style="width: 70px; text-align: center;"> Student ID </th> <th> Reason </th> <th style="width: 80px; text-align: center;"> Date <select id="dateSort"name="dateSort"style="float:right"> <option value="Ascending">Ascending</option> <option value="Descending">Descending</option> </select> </th> </tr></thead>`);
                         $('#dis-load').css('display', 'none');
                         $("#print-display").prop("disabled", false);

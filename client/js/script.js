@@ -30,6 +30,7 @@ $('#logout').on('click', function() {
     localStorage.removeItem('userName');
     localStorage.removeItem('userEmpID');
     localStorage.removeItem('userPos');
+    localStorage.removeItem('userView');
     window.location.href = 'login.html';
 });
 
@@ -92,97 +93,117 @@ function fetchStudentsDetails(ui) {
     })
     .then(response => response.json())
         .then(student => {
-            console.log(student);
-            $('#search-load').css('display', 'none');
-            $verified = '<tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>'+ toOrdinalNumber(student['res'][0][0].semester) + ' Trimester ' + student['res'][0][0].sy_from + '-' + student['res'][0][0].sy_to + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br>';
-            $confirmed = '<tr style="position:relative"> <td colspan="2"> <img src="./img/logo.png" alt="" width="90px" style="padding-left:5px"> <span style="position:absolute;bottom:5px;right:2px;font-size:8px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span> </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr> <td>Date: ' + getFormattedDateTime().date + '</td><td>Entry Time: ' + getFormattedDateTime().time + '</td></tr><tr> <td colspan="2">Name: '+ student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname +' </td></tr><tr> <td colspan="2">Course & Year Level: ' + student['res'][0][0].course_code + ' ' + student['res'][0][0].year_level + ' </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr> <td style="width:50%">';
-            
-            var reasonsLeft = '';
-            var reasonsRight = '';
-            var reasons = student['res'][1];
-            var halfLength = Math.ceil(reasons.length / 2);
-
-            for (var i = 0; i < reasons.length; i++) {
-                var reason = reasons[i];
-                if(reason['r_index'] !== '999'){
-                    var reasonHtml = '<input type="checkbox" id="checkbox' + reason['r_index'] + '" name="checkbox' + reason['r_index'] + '" value="' + reason['description'] + '"> <label for="checkbox' + reason['r_index'] + '">' + reason['description'] + '</label> <br>';
+            if(localStorage.getItem('userView') == 1){
+                $('#search-load').css('display', 'none');
+                $verified = '<tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>'+ (student['res'][0][0].semester != null ? toOrdinalNumber(student['res'][0][0].semester) + ' Trimester ' + student['res'][0][0].sy_from + '-' + student['res'][0][0].sy_to : 'No Record') + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr><tr><td colspan="3"><div style="display: flex; justify-content: center;"><button id="confirm" style="width:50%; padding:5px; margin:0; background-color:#00b0f0;border:none;cursor:pointer" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Confirm</button></div></td></tr><tr><td colspan="2">Reason:<br>';
+                $confirmed = '<tr style="position:relative"> <td colspan="2"> <img src="./img/logo.png" alt="" width="90px" style="padding-left:5px"> <span style="position:absolute;bottom:5px;right:2px;font-size:8px;font-weight:700">OCCUPATIONAL SAFETY AND HEALTH OFFICE</span> </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">STUDENT TEMPORARY GATE PASS</td></tr><tr> <td>Date: ' + getFormattedDateTime().date + '</td><td>Entry Time: ' + getFormattedDateTime().time + '</td></tr><tr> <td colspan="2">Name: '+ student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname +' </td></tr><tr> <td colspan="2">Course & Year Level: ' + student['res'][0][0].course_code + ' ' + student['res'][0][0].year_level + ' </td></tr><tr class="grey"> <td colspan="2" style="font-weight:700;text-align:center">Reason</td></tr><tr> <td style="width:50%">';
                 
-                    if (i < halfLength) {
-                        reasonsLeft += reasonHtml;
-                    } else {
-                        reasonsRight += reasonHtml;
+                var reasonsLeft = '';
+                var reasonsRight = '';
+                var reasons = student['res'][1];
+                var halfLength = Math.ceil(reasons.length / 2);
+    
+                for (var i = 0; i < reasons.length; i++) {
+                    var reason = reasons[i];
+                    if(reason['r_index'] !== '999'){
+                        var reasonHtml = '<input type="checkbox" id="checkbox' + reason['r_index'] + '" name="checkbox' + reason['r_index'] + '" value="' + reason['description'] + '"> <label for="checkbox' + reason['r_index'] + '">' + reason['description'] + '</label> <br>';
+                    
+                        if (i < halfLength) {
+                            reasonsLeft += reasonHtml;
+                        } else {
+                            reasonsRight += reasonHtml;
+                        }
+    
+                        $reason2 = '<input type="radio" name="option" value="'+ reason['description'] +'" id="' + reason['r_index'] + '"><label for="' + reason['r_index'] + '">'+ reason['description'] +'</label><br>';
+                        $verified += $reason2;
                     }
-
-                    $reason2 = '<input type="radio" name="option" value="'+ reason['description'] +'" id="' + reason['r_index'] + '"><label for="' + reason['r_index'] + '">'+ reason['description'] +'</label><br>';
-                    $verified += $reason2;
                 }
-            }
-            $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:100%;float:right" placeholder="Input other reason" maxlength="28"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
-            $('#studentDetailsTable').append($verified);
-
-            $recordhist='<tr><th colspan="3"><h3>Past Temporary Gate Pass Issuances</h3></th></tr><tr style="background-color: #e4fbe3;"><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
-            var records = student['res'][2];
-            if(records.length !== 0){
-                for (var i = 0; i < records.length; i++) {
-                    var record = records[i];
-                    $recordhist +='<tr><td>'+ record['reason'] +'</td><td>'+ record['create_dt'] +'</td><td>'+ record['name'] +'</td></tr>'; 
-                }
-            }else{
-                $recordhist +='<tr><td colspan="3" style="text-align: center;">No previous issuances</td></tr>'; 
-            }
-            $('#studentRecordsTable').append($recordhist);
-            
-            $('#studentDetails').fadeIn(1500);
-            
-            $confirmed += reasonsLeft + '</td><td style="padding-right:20px;width:50%">' + reasonsRight + '<input type="checkbox" id="checkbox999" name="checkbox999" value="Others"> <label for="checkbox999">Others:</label> <br><input type="text" id="others" style="border:none;font-size:9px;border-bottom:1px solid #000;width:100%;background-color:transparent"> </td></tr><tr> <td colspan="2" style="font-style:italic;font-weight:700;text-align:center;">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr> <td colspan="2"> <div style="width:70%;margin:0 auto;text-align:center;padding-top:15px;"> <hr> <span style="font-weight:700">Student Signature</span> </div></td></tr><tr> <td colspan="2"> <div style="margin:0 auto;text-align:center; padding-top: 15px;padding-bottom: 4px;"> <span style="text-decoration-line:underline; font-size:10px;">' + localStorage.getItem('userPos') + ' ' + localStorage.getItem('userName') + ' / ' + getFormattedDateTime().date + '</span> <br><span style="font-weight:700;font-size:8px;">Issuing Officer</span> <br><span style="font-size:8px;">(Name | Signature | Date)</span> </div></td></tr><tr> <td colspan="2" style="padding:0 0 0 3px;">UC-OSH-FORM-03 <br>May 26, 2022 Rev.01 </td></tr>';
-            $('#gatePass').append($confirmed);
-
-            $('#searchResults').hide();
-          
-            $('#other_option').prop('disabled', true);
-            $('#studentDetailsTable tr:last-child, #studentDetailsTable tr:nth-last-child(2)').hide();
-            $('#confirm').on('click', function() {
-                $('#studentDetailsTable tr:last-child, #studentDetailsTable tr:nth-last-child(2)').show(1000);
-                $('#studentDetailsTable tr:nth-last-child(3)').hide();
-            });
-            $('#print-btn').prop('disabled', true);
-          
-            $reason = '';
-            $('input[type="radio"], #other_option').on('change', function() {
-                $('input[type="checkbox"]').prop('checked', false);
-                if($('input[type="radio"]:checked').attr('id') == "999"){
-                    $('#other_option').prop('disabled', false);
+                $verified += '<input type="radio" name="option" value="Others" id="999"><label for="999">Others:</label><input type="text" name="other_option" id="other_option" style="width:100%;float:right" placeholder="Input other reason" maxlength="28"></td><td style="padding: 20px;"><button style="width:100%; background-color: #00b0f0; height:90px; cursor: pointer; border-radius: 8px;" id="print-btn" onmouseover=\'this.style.backgroundColor="#0080c0"\' onmouseout=\'this.style.backgroundColor="#00b0f0"\' >Print</button><p style="color:red; text-align: center;" id="opt-err"></p></td></tr><tr><td colspan="3">Issuing Officer: '+ localStorage.getItem('userPos') +' '+ localStorage.getItem('userName') +'</td></tr>';
+                $('#studentDetailsTable').append($verified);
+    
+                $recordhist='<tr><th colspan="3"><h3>Past Temporary Gate Pass Issuances</h3></th></tr><tr style="background-color: #e4fbe3;"><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
+                var records = student['res'][2];
+                if(records.length !== 0){
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        $recordhist +='<tr><td>'+ record['reason'] +'</td><td>'+ record['create_dt'] +'</td><td>'+ record['name'] +'</td></tr>'; 
+                    }
                 }else{
-                    $('#other_option').prop('disabled', true);
-                    $('#other_option').val('');
+                    $recordhist +='<tr><td colspan="3" style="text-align: center;">No previous issuances</td></tr>'; 
                 }
+                $('#studentRecordsTable').append($recordhist);
                 
-                $('#opt-err').text("");
-                $('#others').val('');
-                forPrinting();
-            });
-             
-            $('#print-btn').on('click', () => {
-                var create_dt = getFormattedDateTime().unFoDate+' '+getFormattedDateTime().unFoTime;
-                var created_by = localStorage.getItem('userEmpID');
-                var user_index = student['res'][0][0].user_index;
-                var reason_index = $('input[type="radio"]:checked').attr('id');
-                $('#others').val($('#other_option').val().trim());
-                var reason_others = $('#others').val();
-                $("#checkbox" + $('input[type="radio"]:checked').attr('id')).prop("checked", true);
-                if($('input[type="radio"]:checked').val() === 'Others'){
-                    if($('#others').val().trim() === ''){
-                        $('#opt-err').text("Input reason for 'Other' option");
+                $('#studentDetails').fadeIn(1500);
+                
+                $confirmed += reasonsLeft + '</td><td style="padding-right:20px;width:50%">' + reasonsRight + '<input type="checkbox" id="checkbox999" name="checkbox999" value="Others"> <label for="checkbox999">Others:</label> <br><input type="text" id="others" style="border:none;font-size:9px;border-bottom:1px solid #000;width:100%;background-color:transparent"> </td></tr><tr> <td colspan="2" style="font-style:italic;font-weight:700;text-align:center;">Note: This Student Temporary Gate pass is valid 1 day only</td></tr><tr> <td colspan="2"> <div style="width:70%;margin:0 auto;text-align:center;padding-top:15px;"> <hr> <span style="font-weight:700">Student Signature</span> </div></td></tr><tr> <td colspan="2"> <div style="margin:0 auto;text-align:center; padding-top: 15px;padding-bottom: 4px;"> <span style="text-decoration-line:underline; font-size:10px;">' + localStorage.getItem('userPos') + ' ' + localStorage.getItem('userName') + ' / ' + getFormattedDateTime().date + '</span> <br><span style="font-weight:700;font-size:8px;">Issuing Officer</span> <br><span style="font-size:8px;">(Name | Signature | Date)</span> </div></td></tr><tr> <td colspan="2" style="padding:0 0 0 3px;">UC-OSH-FORM-03 <br>May 26, 2022 Rev.01 </td></tr>';
+                $('#gatePass').append($confirmed);
+    
+                $('#searchResults').hide();
+              
+                $('#other_option').prop('disabled', true);
+                $('#studentDetailsTable tr:last-child, #studentDetailsTable tr:nth-last-child(2)').hide();
+                $('#confirm').on('click', function() {
+                    $('#studentDetailsTable tr:last-child, #studentDetailsTable tr:nth-last-child(2)').show(1000);
+                    $('#studentDetailsTable tr:nth-last-child(3)').hide();
+                });
+                $('#print-btn').prop('disabled', true);
+              
+                $reason = '';
+                $('input[type="radio"], #other_option').on('change', function() {
+                    $('input[type="checkbox"]').prop('checked', false);
+                    if($('input[type="radio"]:checked').attr('id') == "999"){
+                        $('#other_option').prop('disabled', false);
                     }else{
+                        $('#other_option').prop('disabled', true);
+                        $('#other_option').val('');
+                    }
+                    
+                    $('#opt-err').text("");
+                    $('#others').val('');
+                    forPrinting();
+                });
+                 
+                $('#print-btn').on('click', () => {
+                    var create_dt = getFormattedDateTime().unFoDate+' '+getFormattedDateTime().unFoTime;
+                    var created_by = localStorage.getItem('userEmpID');
+                    var user_index = student['res'][0][0].user_index;
+                    var reason_index = $('input[type="radio"]:checked').attr('id');
+                    $('#others').val($('#other_option').val().trim());
+                    var reason_others = $('#others').val();
+                    $("#checkbox" + $('input[type="radio"]:checked').attr('id')).prop("checked", true);
+                    if($('input[type="radio"]:checked').val() === 'Others'){
+                        if($('#others').val().trim() === ''){
+                            $('#opt-err').text("Input reason for 'Other' option");
+                        }else{
+                            window.print();
+                            addToDB(create_dt, created_by, user_index, reason_index, reason_others);
+                        }
+                    }else{
+                        $('#others').val('');
                         window.print();
-                        addToDB(create_dt, created_by, user_index, reason_index, reason_others);
+                        addToDB(create_dt, created_by, user_index, reason_index, null);
+                    }
+                }); 
+            }else{
+                $('#search-load').css('display', 'none');
+                $verified = '<tr><td width="30%">Name:</td><td width="40%">' + student['res'][0][0].lname + ', ' + student['res'][0][0].fname + ' ' + student['res'][0][0].mname + '</td><td rowspan="8" width="30%"><img src="../client/img/uc_seal.png" alt="" width="100%" height="100%"></td></tr><tr><td>ID#:</td><td>' + student['res'][0][0].id_number + '</td></tr><tr><td>Dept.:</td><td>' + student['res'][0][0].c_name + '</td></tr><tr><td>Course:</td><td>' + student['res'][0][0].course_code + '</td></tr><tr><td>Year Level:</td><td>' + student['res'][0][0].year_level + '</td></tr><tr><td>Sex:</td><td>' + (student['res'][0][0].gender == 'F' ? 'Female':'Male') + '</td></tr><tr><td>Last Enrollment:</td><td>'+ (student['res'][0][0].semester !== null ? toOrdinalNumber(student['res'][0][0].semester) + ' Trimester ' + student['res'][0][0].sy_from + '-' + student['res'][0][0].sy_to : 'No Record') + '</td></tr><tr><td>Year Graduated:</td><td>' + student['res'][0][0].grad_year + '</td></tr>';
+            
+                $('#studentDetailsTable').append($verified);
+
+                $recordhist='<tr><th colspan="3"><h3>Past Temporary Gate Pass Issuances</h3></th></tr><tr style="background-color: #e4fbe3;"><th>Reason</th><th>Date</th><th>Issued By</th></tr>';
+                var records = student['res'][2];
+                if(records.length !== 0){
+                    for (var i = 0; i < records.length; i++) {
+                        var record = records[i];
+                        $recordhist +='<tr><td>'+ record['reason'] +'</td><td>'+ record['create_dt'] +'</td><td>'+ record['name'] +'</td></tr>'; 
                     }
                 }else{
-                    $('#others').val('');
-                    window.print();
-                    addToDB(create_dt, created_by, user_index, reason_index, null);
+                    $recordhist +='<tr><td colspan="3" style="text-align: center;">No previous issuances</td></tr>'; 
                 }
-            });      
+                $('#studentRecordsTable').append($recordhist);
+                $('#studentDetails').fadeIn(1500);
+                $('#searchResults').hide();
+            }
         })
     .catch(error => console.error(error));
 }
@@ -210,7 +231,6 @@ function fetchStudent(ui) {
         })
         .then(response => response.json())
         .then(studentResult => {
-            		
             if ($('#studentDetails').is(':visible')) {
                 $('#studentDetails').slideUp(500);
                 $('#searchResults').slideDown(1000);
@@ -231,7 +251,6 @@ function fetchStudent(ui) {
                 $('#searchErrorMessage').empty();
                 $('#searchResultsTable').append("<tr class='dth'><th width='70%'>Name</th><th width='20%'>ID Number</th><th width='10%'>Gender</th></tr>");
                 studentResult['res'].forEach(function(student) {
-                    console.log(student);
                     $studentResultDisplay = '<tr ui="' + student.user_index + '"><td>' + student.lname + ', ' + student.fname + ' ' + student.mname +'</td><td>' + student.id_number + '</td><td>' + student.gender + '</td></tr>';
                     $('#searchResultsTable').append($studentResultDisplay);
                 });
@@ -261,8 +280,6 @@ function addToDB(create_dt, created_by, user_index, reason_index, reason_others)
             $('#studentDetailsTable').empty();	
             $('#studentRecordsTable').empty();
             $('#searchInput').val('');
-        } else {
-            console.log("Fetch unsuccessful");
         }
     })
     .catch(error => console.error(error));		

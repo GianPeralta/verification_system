@@ -14,7 +14,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     $username = mysqli_real_escape_string($conn, $username);
     $password = mysqli_real_escape_string($conn, $password);
 
-    $qry = "SELECT emp_id, name, position, token FROM users CROSS JOIN token WHERE username=? AND password=MD5(?)";
+    $qry = "SELECT emp_id, name, position, token, view, is_active FROM users CROSS JOIN token WHERE username=? AND password=MD5(?)";
     $stmt = mysqli_prepare($conn, $qry);
     mysqli_stmt_bind_param($stmt, 'ss', $username, $password);
     mysqli_stmt_execute($stmt);
@@ -31,7 +31,12 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     $user_ar = array();
 
     while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-        array_push($user_ar, $row);
+        if($row['is_active'] !== 0){
+            array_push($user_ar, $row);
+        }else{
+            echo json_encode(['error' => 'User no longer active.']);
+            exit;
+        }
     }
 
     echo json_encode($user_ar);

@@ -8,7 +8,7 @@
         $error = null;
         try {
             $stud_stats = array();
-            $qrystuds = "SELECT ut.user_index, ut.id_number, ut.fname, ut.mname, ut.lname, ut.gender, sch.cur_hist_index, sch.course_index schci, sch.sy_from, sch.sy_to, sch.semester, sch.year_level, COALESCE(gd.grad_year, 'No Record') AS grad_year, co.course_index, co.tution_type, co.course_code, co.course_name, c.c_index, c.c_code, c.c_name
+            $qrystuds = "SELECT ut.user_index, ut.id_number, ut.fname, ut.mname, ut.lname, ut.gender, sch.cur_hist_index, sch.course_index schci, sch.sy_from, sch.sy_to, sch.semester, COALESCE(sch.year_level, 'No Record') AS year_level, COALESCE(gd.grad_year, 'No Record') AS grad_year, co.course_index, co.tution_type, COALESCE(co.course_code, 'No Record') AS course_code, co.course_name, c.c_index, c.c_code, COALESCE(c.c_name, 'No Record') AS c_name
             FROM user_table ut
             LEFT JOIN stud_curriculum_hist sch ON sch.user_index = ut.user_index
             LEFT JOIN graduation_data gd ON gd.stud_index = ut.user_index

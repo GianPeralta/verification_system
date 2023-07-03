@@ -9,7 +9,7 @@
         try {
             $qrystuds = "SELECT *
             FROM user_table ut
-            WHERE LOWER(CONCAT(ut.fname%, ' ', ut.lname)) LIKE LOWER('$ss%') OR
+            WHERE LOWER(CONCAT(ut.fname, ' ', ut.lname)) LIKE LOWER('$ss%') OR
                   LOWER(CONCAT(ut.lname, ' ', ut.fname)) LIKE LOWER('$ss%') OR
                   LOWER(CONCAT(ut.lname, ', ', ut.fname,' ',ut.mname)) LIKE LOWER('$ss%') OR
                   LOWER(CONCAT(ut.fname, ' ', ut.mname,' ',ut.lname)) LIKE LOWER('$ss%') OR
